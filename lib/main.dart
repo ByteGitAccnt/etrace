@@ -1,7 +1,7 @@
-import 'package:etrace/HomePage.dart';
-import 'package:etrace/LoginPage.dart';
+import 'package:etrace/Pages/HomePage.dart';
+import 'package:etrace/Pages/LoginPage.dart';
 import 'package:flutter/material.dart';
-import 'package:etrace/RegisterPage.dart';
+import 'package:etrace/Pages/RegisterPage.dart';
 
 //inal Color emeraldDark = const Color(0xFF046A38);
 // final Color emeraldLight = const Color(0xFF2EBB57);
@@ -15,22 +15,23 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const Color emerald = Color(0xFF046A38);
     return MaterialApp(
       initialRoute: '/login', // 👈 start here
       onGenerateRoute: (settings) {
         late Widget page;
         switch (settings.name) {
           case '/login':
-            page = LoginPage();
+            page = LoginPage(emerald: emerald);
             break;
           case '/register':
-            page = Registerpage();
+            page = Registerpage(emerald: emerald);
             break;
           case '/home':
-          page = HomePage();
+            page = HomePage(emerald: emerald);
             break;
           default:
-            page = HomePage();
+            page = HomePage(emerald: emerald);
         }
         return PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => page,
@@ -54,8 +55,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Project App',
       theme: ThemeData(primarySwatch: Colors.green),
-      // The home widget will be connected by you
-      home: LoginPage(),
     );
   }
 }

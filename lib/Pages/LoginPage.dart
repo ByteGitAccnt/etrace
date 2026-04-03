@@ -3,19 +3,31 @@ import 'package:flutter/services.dart';
 import 'package:etrace/Utils/ModerButton.dart';
 import 'package:etrace/Utils/CustomeInputDecorator.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
-  final Color emerald = Color(0xFF046A38);
-  final Color blackShade = const Color(0xFF1C1C1C);
+class LoginPage extends StatefulWidget {
+  LoginPage({required this.emerald, super.key});
+  final Color emerald;
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final Color blackShade = const Color(0xFF1C1C1C);
   final _formKey = GlobalKey<FormState>();
   final _username = TextEditingController();
   final _password = TextEditingController();
 
   @override
+  void dispose() {
+    _username.dispose();
+    _password.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: emerald, // optional background
+      backgroundColor: widget.emerald, // optional background
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -50,7 +62,7 @@ class LoginPage extends StatelessWidget {
                   width: 365,
                   child: ModernButton(
                     text: "Login",
-                    emerald: emerald,
+                    emerald: widget.emerald,
                     blackShade: blackShade,
                     onPressed: () async {
                       HapticFeedback.lightImpact();
@@ -58,7 +70,7 @@ class LoginPage extends StatelessWidget {
                       bool success = true; //change
                       // need make the login logic
                       //if (_formKey.currentState!.validate()) {
-                        //success = await loginUser(_username.text, _password.text);
+                      //success = await loginUser(_username.text, _password.text);
                       //}
                       if (success) {
                         // handle success

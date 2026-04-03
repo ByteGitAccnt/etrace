@@ -3,9 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:etrace/Utils/CustomeInputDecorator.dart';
 
-class Registerpage extends StatelessWidget {
-  Registerpage({super.key});
-  final Color emerald = Color(0xFF046A38);
+class Registerpage extends StatefulWidget {
+  Registerpage({required this.emerald, super.key});
+  final Color emerald;
+
+  @override
+  State<Registerpage> createState() => _RegisterpageState();
+}
+
+class _RegisterpageState extends State<Registerpage> {
   final Color blackShade = const Color(0xFF1C1C1C);
 
   final _formKey = GlobalKey<FormState>();
@@ -16,9 +22,19 @@ class Registerpage extends StatelessWidget {
   final _name = TextEditingController();
 
   @override
+  void dispose() {
+    _username.dispose();
+    _password.dispose();
+    _confirmPass.dispose();
+    _email.dispose();
+    _name.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: emerald, // optional background
+      backgroundColor: widget.emerald, // optional background
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -78,7 +94,7 @@ class Registerpage extends StatelessWidget {
                   width: 365,
                   child: ModernButton(
                     text: "Register",
-                    emerald: emerald,
+                    emerald: widget.emerald,
                     blackShade: blackShade,
                     onPressed: () async {
                       HapticFeedback.lightImpact();
