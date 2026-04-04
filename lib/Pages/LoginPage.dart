@@ -1,3 +1,4 @@
+import 'package:etrace/Api/Login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:etrace/Utils/ModerButton.dart';
@@ -45,17 +46,29 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                TextField(
+                TextFormField(
                   style: const TextStyle(color: Colors.white),
                   decoration: CustomeInputDecorator("Email", Icons.email),
                   controller: _username,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'required';
+                    }
+                    return null; // valid input
+                  },
                 ),
                 const SizedBox(height: 16),
-                TextField(
+                TextFormField(
                   obscureText: true,
                   style: const TextStyle(color: Colors.white),
                   decoration: CustomeInputDecorator("Password", Icons.lock),
                   controller: _password,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'required';
+                    }
+                    return null; // valid input
+                  },
                 ),
                 const SizedBox(height: 24),
                 SizedBox(
@@ -66,21 +79,23 @@ class _LoginPageState extends State<LoginPage> {
                     blackShade: blackShade,
                     onPressed: () async {
                       HapticFeedback.lightImpact();
-                      // Handle login
-                      bool success = true; //change
-                      // need make the login logic
-                      //if (_formKey.currentState!.validate()) {
-                      //success = await loginUser(_username.text, _password.text);
-                      //}
+
+                      if (!_formKey.currentState!.validate()) return;
+
+                      final success = await login(
+                        _username.text,
+                        _password.text,
+                      );
+
                       if (success) {
-                        // handle success
-                        Navigator.pushNamed(context, '/home');
+                        print("object");
+                        Navigator.pushReplacementNamed(context, '/home');
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: const Text(
                               "Login failed. Please try again.",
-                              style: TextStyle(color: Color(0xFFFFFFFF)),
+                              style: TextStyle(color: Colors.white),
                             ),
                             duration: const Duration(seconds: 2),
                             backgroundColor: blackShade,

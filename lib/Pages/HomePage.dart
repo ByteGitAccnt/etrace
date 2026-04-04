@@ -39,11 +39,31 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: widget.emerald,
-
       //App Bar
       appBar: AppBar(
         backgroundColor: widget.emerald,
-        elevation: 2, // 👈 slight depth
+        elevation: 2,
+        centerTitle: true,
+
+        // LEFT: Logout button (replaces back button)
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              icon: const Icon(Icons.logout),
+              color: Colors.white,
+              onPressed: () {
+                // TODO: logout logic
+              },
+            ),
+          ),
+        ),
+
+        // 🔹 TITLE
         title: const Text(
           "ETrace",
           style: TextStyle(
@@ -52,17 +72,16 @@ class _HomePageState extends State<HomePage> {
             letterSpacing: 1,
           ),
         ),
-        centerTitle: true,
-        iconTheme: const IconThemeData(
-          color: Colors.white, // 👈 ensures all icons visible
-        ),
 
+        iconTheme: const IconThemeData(color: Colors.white),
+
+        // RIGHT: Notification button
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.15), // subtle background
+                color: Colors.white.withOpacity(0.15),
                 shape: BoxShape.circle,
               ),
               child: IconButton(

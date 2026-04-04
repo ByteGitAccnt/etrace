@@ -37,14 +37,42 @@ class HomeContent extends StatelessWidget {
         "date": "Apr 1",
         "icon": Icons.receipt_long,
       },
+      {
+        "title": "Shopping",
+        "amount": 800,
+        "date": "Apr 1",
+        "icon": Icons.receipt_long,
+      },
+      {
+        "title": "Shopping",
+        "amount": 800,
+        "date": "Apr 1",
+        "icon": Icons.receipt_long,
+      },
     ];
+
+    // Inside HomeContent build method:
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 24),
         _buildBalanceCard(),
         const SizedBox(height: 20),
-        TransactionList(title: "Recent Expenses", transactions: transactions),
-        const Spacer(),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            "Recent Expenses",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: Colors.white,
+            ),
+          ),
+        ),
+        Expanded(
+          // This forces the list to take up the remaining space and be scrollable
+          child: TransactionList(transactions: transactions),
+        ),
       ],
     );
   }

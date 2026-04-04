@@ -1,3 +1,5 @@
+import 'package:etrace/Api/Register.dart';
+import 'package:etrace/Model/User.dart';
 import 'package:etrace/Utils/ModerButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -52,35 +54,59 @@ class _RegisterpageState extends State<Registerpage> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                TextField(
+                TextFormField(
                   style: const TextStyle(color: Colors.white),
                   decoration: CustomeInputDecorator("Name", Icons.person),
                   controller: _name,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'This field cannot be empty';
+                    }
+                    return null; // valid input
+                  },
                 ),
                 const SizedBox(height: 16),
-                TextField(
+                TextFormField(
                   style: const TextStyle(color: Colors.white),
                   decoration: CustomeInputDecorator("Email", Icons.email),
                   controller: _email,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'This field cannot be empty';
+                    }
+                    return null; // valid input
+                  },
                 ),
                 const SizedBox(height: 16),
-                TextField(
+                TextFormField(
                   style: const TextStyle(color: Colors.white),
                   decoration: CustomeInputDecorator(
                     "Username",
                     Icons.account_circle,
                   ),
                   controller: _username,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'This field cannot be empty';
+                    }
+                    return null; // valid input
+                  },
                 ),
                 const SizedBox(height: 16),
-                TextField(
+                TextFormField(
                   obscureText: true,
                   style: const TextStyle(color: Colors.white),
                   decoration: CustomeInputDecorator("Password", Icons.lock),
                   controller: _password,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'This field cannot be empty';
+                    }
+                    return null; // valid input
+                  },
                 ),
                 const SizedBox(height: 16),
-                TextField(
+                TextFormField(
                   obscureText: true,
                   style: const TextStyle(color: Colors.white),
                   decoration: CustomeInputDecorator(
@@ -88,6 +114,12 @@ class _RegisterpageState extends State<Registerpage> {
                     Icons.lock,
                   ),
                   controller: _confirmPass,
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'This field cannot be empty';
+                    }
+                    return null; // valid input
+                  },
                 ),
                 const SizedBox(height: 24),
                 SizedBox(
@@ -98,23 +130,36 @@ class _RegisterpageState extends State<Registerpage> {
                     blackShade: blackShade,
                     onPressed: () async {
                       HapticFeedback.lightImpact();
-                      // Handle register
-                      bool success = false; //change
 
-                      if (_formKey.currentState!.validate()) {
-                        //success = await loginUser(_username.text, _password.text);
-                      }
-                      if (success) {
-                        // handle success
-                        Navigator.pushNamed(context, '/home');
+                      if (!_formKey.currentState!.validate()) return;
+
+                      final user = await registerUser(
+                        _name.text,
+                        _email.text,
+                        _username.text,
+                        _password.text,
+                        _confirmPass.text,
+                      );
+
+                      if (user != null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                              "Registration successful! Please login.",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+
+                        Navigator.pushReplacementNamed(context, '/login');
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: const Text(
                               "Registration failed. Please try again.",
-                              style: TextStyle(color: Color(0xFFFFFFFF)),
+                              style: TextStyle(color: Colors.white),
                             ),
-                            duration: const Duration(seconds: 5),
                             backgroundColor: blackShade,
                           ),
                         );
@@ -122,7 +167,6 @@ class _RegisterpageState extends State<Registerpage> {
                     },
                   ),
                 ),
-                const SizedBox(height: 20),
               ],
             ),
           ),

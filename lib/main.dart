@@ -2,11 +2,14 @@ import 'package:etrace/Pages/HomePage.dart';
 import 'package:etrace/Pages/LoginPage.dart';
 import 'package:flutter/material.dart';
 import 'package:etrace/Pages/RegisterPage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 //inal Color emeraldDark = const Color(0xFF046A38);
 // final Color emeraldLight = const Color(0xFF2EBB57);
 // final Color blackShade = const Color(0xFF1C1C1C);
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env"); //  load env
   runApp(const MyApp());
 }
 
@@ -38,7 +41,7 @@ class MyApp extends StatelessWidget {
           transitionDuration: const Duration(
             milliseconds: 250,
           ), // 👈 shorter = faster
-          reverseTransitionDuration: const Duration(milliseconds: 250),
+          reverseTransitionDuration: const Duration(milliseconds: 350),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             const begin = Offset(1.0, 0.0); // slide from right
             const end = Offset.zero;

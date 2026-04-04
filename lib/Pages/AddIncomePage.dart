@@ -72,24 +72,24 @@ class _AddIncomePageState extends State<AddIncomePage> {
                   emerald: widget.emerald,
                   blackShade: blackShade,
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      final data = {
-                        "amount": double.parse(amountController.text),
-                      };
+                    if (!_formKey.currentState!.validate()) return;
+                    // data needed to be added
+                    final data = {
+                      "amount": double.parse(amountController.text),
+                    };
 
-                      print(data);
-                      Navigator.pop(context);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text(
-                            "Income Added Successfully!",
-                            style: TextStyle(color: Color(0xFFFFFFFF)),
-                          ),
-                          duration: const Duration(seconds: 1),
-                          backgroundColor: blackShade,
+                    print(data);
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text(
+                          "Income Added Successfully!",
+                          style: TextStyle(color: Color(0xFFFFFFFF)),
                         ),
-                      );
-                    }
+                        duration: const Duration(seconds: 1),
+                        backgroundColor: blackShade,
+                      ),
+                    );
                   },
                 ),
               ),
