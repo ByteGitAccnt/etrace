@@ -1,3 +1,5 @@
+import 'package:etrace/Pages/ExpensePage.dart';
+import 'package:etrace/Pages/ExpenseSerchPage.dart';
 import 'package:etrace/Pages/HomePage.dart';
 import 'package:etrace/Pages/LoginPage.dart';
 import 'package:flutter/material.dart';
@@ -32,6 +34,9 @@ class MyApp extends StatelessWidget {
             break;
           case '/home':
             page = HomePage(emerald: emerald);
+            break;
+          case '/searchResults':
+            page = ExpensePage();
             break;
           default:
             page = HomePage(emerald: emerald);

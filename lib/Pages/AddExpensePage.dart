@@ -1,5 +1,6 @@
 import 'package:etrace/Utils/CustomeInputDecorator.dart';
 import 'package:etrace/Utils/ModerButton.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
 class AddExpensePage extends StatefulWidget {
@@ -80,20 +81,21 @@ class _AddExpensePageState extends State<AddExpensePage> {
                   "Expense Date",
                   Icons.calendar_today,
                 ),
+                validator: (value) => value == null || value.isEmpty
+                    ? 'Please select a date'
+                    : null,
                 onTap: () async {
                   FocusScope.of(context).unfocus();
-
                   DateTime? picked = await showDatePicker(
                     context: context,
                     initialDate: DateTime.now(),
                     firstDate: DateTime(2020),
                     lastDate: DateTime(2100),
                   );
-
                   if (picked != null) {
-                    dateController.text = picked.toIso8601String().split(
-                      "T",
-                    )[0];
+                    dateController.text = DateFormat(
+                      'yyyy-MM-dd',
+                    ).format(picked);
                   }
                 },
               ),
@@ -112,11 +114,9 @@ class _AddExpensePageState extends State<AddExpensePage> {
                     ),
                   );
                 },
-
                 onSelected: (selection) {
                   categoryController.text = selection;
                 },
-
                 fieldViewBuilder:
                     (context, controller, focusNode, onFieldSubmitted) {
                       return TextFormField(
@@ -130,6 +130,14 @@ class _AddExpensePageState extends State<AddExpensePage> {
                         validator: (value) => value == null || value.isEmpty
                             ? "Enter category"
                             : null,
+                        onFieldSubmitted: (value) {
+                          // If user presses enter with a custom value
+                          categoryController.text = value;
+                        },
+                        onChanged: (value) {
+                          // Keep controller in sync with typed text
+                          categoryController.text = value;
+                        },
                       );
                     },
               ),
@@ -220,7 +228,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                       final data = {
                         "amount": double.parse(amountController.text),
                         "expenseDate": dateController.text,
-                        "category": selectedCategory,
+                        "category": categoryController.text,
                         "note": noteController.text,
                         "isReserved": isReserved,
                         "label": labelController.text,

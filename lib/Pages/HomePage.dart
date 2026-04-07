@@ -1,6 +1,7 @@
 import 'package:etrace/Pages/AddExpensePage.dart';
 import 'package:etrace/Pages/AddIncomePage.dart';
 import 'package:etrace/Pages/AddReservePage.dart';
+import 'package:etrace/Pages/ExpenseSerchPage.dart';
 import 'package:etrace/Pages/HomeContent.dart';
 import 'package:etrace/Pages/ReportPage.dart';
 import 'package:etrace/Pages/ReservePage.dart';
@@ -25,7 +26,7 @@ class _HomePageState extends State<HomePage> {
       case 0:
         return HomeContent();
       case 1:
-        return ExpensePage();
+        return ExpenseSearchPage(emerald: widget.emerald);
       case 2:
         return ReservePage();
       case 3:

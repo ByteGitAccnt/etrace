@@ -95,6 +95,15 @@ class ExpensePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: emerald,
+        elevation: 0,
+        title: const Text(
+          "Expense list",
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       backgroundColor: emerald,
       body: SafeArea(
         child: Column(
@@ -102,7 +111,7 @@ class ExpensePage extends StatelessWidget {
               CrossAxisAlignment.start, // 👈 Aligns heading to the left
           children: [
             // --- Heading ---
-            const Padding(
+            /* const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
                 "Expenses",
@@ -112,7 +121,7 @@ class ExpensePage extends StatelessWidget {
                   fontSize: 20,
                 ),
               ),
-            ),
+            ), */
 
             // --- Scrollable Transaction List ---
             Expanded(
