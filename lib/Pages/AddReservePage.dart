@@ -15,6 +15,7 @@ class _AddReservePageState extends State<AddReservePage> {
 
   final amountController = TextEditingController();
   final labelController = TextEditingController();
+  final noteController = TextEditingController();
 
   final Color blackShade = const Color(0xFF1C1C1C);
 
@@ -22,6 +23,7 @@ class _AddReservePageState extends State<AddReservePage> {
   void dispose() {
     amountController.dispose();
     labelController.dispose();
+    noteController.dispose();
     super.dispose();
   }
 
@@ -85,6 +87,13 @@ class _AddReservePageState extends State<AddReservePage> {
               ),
 
               const SizedBox(height: 30),
+              TextFormField(
+                controller: noteController,
+                maxLines: 3,
+                style: const TextStyle(color: Colors.white),
+                decoration: CustomeInputDecorator("Note", Icons.note),
+              ),
+              const SizedBox(height: 16),
 
               /// Submit
               SizedBox(

@@ -1,4 +1,4 @@
-import 'package:etrace/Api/Login.dart';
+import 'package:etrace/Api/AuthService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:etrace/Utils/ModerButton.dart';
@@ -81,12 +81,14 @@ class _LoginPageState extends State<LoginPage> {
                       HapticFeedback.lightImpact();
 
                       if (!_formKey.currentState!.validate()) return;
-
-                      final success = await login(
+                      print(
+                        "Logging in with: ${_username.text} / ${_password.text}",
+                      );
+                      /* final success = await AuthService().login(
                         _username.text,
                         _password.text,
-                      );
-
+                      ); */
+                      bool success = true;
                       if (success) {
                         print("object");
                         Navigator.pushReplacementNamed(context, '/home');

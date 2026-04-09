@@ -1,4 +1,4 @@
-import 'package:etrace/Api/Register.dart';
+import 'package:etrace/Api/AuthService.dart';
 import 'package:etrace/Model/User.dart';
 import 'package:etrace/Utils/ModerButton.dart';
 import 'package:flutter/material.dart';
@@ -133,7 +133,7 @@ class _RegisterpageState extends State<Registerpage> {
 
                       if (!_formKey.currentState!.validate()) return;
 
-                      final user = await registerUser(
+                      final user = await AuthService().register(
                         _name.text,
                         _email.text,
                         _username.text,

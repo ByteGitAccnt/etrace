@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:etrace/Api/AddService.dart';
 import 'package:etrace/Utils/CustomeInputDecorator.dart';
 import 'package:etrace/Utils/ModerButton.dart';
 import 'package:flutter/material.dart';
@@ -71,25 +74,27 @@ class _AddIncomePageState extends State<AddIncomePage> {
                   text: "Add Income",
                   emerald: widget.emerald,
                   blackShade: blackShade,
-                  onPressed: () {
+                  onPressed: () async {
                     if (!_formKey.currentState!.validate()) return;
                     // data needed to be added
-                    final data = {
-                      "amount": double.parse(amountController.text),
-                    };
-
-                    print(data);
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text(
-                          "Income Added Successfully!",
-                          style: TextStyle(color: Color(0xFFFFFFFF)),
-                        ),
-                        duration: const Duration(seconds: 1),
-                        backgroundColor: blackShade,
-                      ),
+                    final data = await AddService().addIncome(
+                      double.parse(amountController.text),
                     );
+                    if (data != null) {
+                      log("Income addedd successfully");
+                      log(data.toString());
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text(
+                            "Income Added Successfully!",
+                            style: TextStyle(color: Color(0xFFFFFFFF)),
+                          ),
+                          duration: const Duration(seconds: 1),
+                          backgroundColor: blackShade,
+                        ),
+                      );
+                    }
+                    Navigator.pop(context);
                   },
                 ),
               ),

@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:etrace/Api/AddService.dart';
 import 'package:etrace/Utils/CustomeInputDecorator.dart';
 import 'package:etrace/Utils/ModerButton.dart';
 import 'package:intl/intl.dart';
@@ -224,33 +227,27 @@ class _AddExpensePageState extends State<AddExpensePage> {
                   emerald: widget.emerald,
                   blackShade: blackShade,
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      final data = {
-                        "amount": double.parse(amountController.text),
-                        "expenseDate": dateController.text,
-                        "category": categoryController.text,
-                        "note": noteController.text,
-                        "isReserved": isReserved,
-                        "label": labelController.text,
-                      };
+                    if (!_formKey.currentState!.validate()) return;
 
-                      print(data);
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: const Text(
-                            "Expense Added Successfully!",
-                            style: TextStyle(color: Color(0xFFFFFFFF)),
-                          ),
-                          duration: const Duration(seconds: 1),
-                          backgroundColor: blackShade,
+                    final data = AddService().addExpense(
+                      double.parse(amountController.text),
+                      DateTime.parse(dateController.text),
+                      categoryController.text,
+                      noteController.text,
+                      isReserved,
+                      labelController.text,
+                    );
+                    log(data.toString()); // need to clear log after testing
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text(
+                          "Expense Added Successfully!",
+                          style: TextStyle(color: Color(0xFFFFFFFF)),
                         ),
-                      );
-                      //no need to pop now , we stay
-                      /* Navigator.pop(
-                        context,
-                      );  */
-                      // submit logic need to be implemented
-                    }
+                        duration: const Duration(seconds: 1),
+                        backgroundColor: blackShade,
+                      ),
+                    );
                   },
                 ),
               ),

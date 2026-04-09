@@ -41,6 +41,8 @@ class MyApp extends StatelessWidget {
           default:
             page = HomePage(emerald: emerald);
         }
+
+        // need dio setup
         return PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => page,
           transitionDuration: const Duration(
