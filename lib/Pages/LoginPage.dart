@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:etrace/Api/AuthService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -81,7 +83,7 @@ class _LoginPageState extends State<LoginPage> {
                       HapticFeedback.lightImpact();
 
                       if (!_formKey.currentState!.validate()) return;
-                      print(
+                      log(
                         "Logging in with: ${_username.text} / ${_password.text}",
                       );
                       /* final success = await AuthService().login(

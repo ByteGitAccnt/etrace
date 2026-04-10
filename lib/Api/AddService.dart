@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:etrace/Api/ApiClient.dart';
 import 'package:etrace/Model/Expense.dart';
+import 'package:etrace/Model/Reserved.dart';
 import 'package:etrace/Model/User.dart';
 
 class AddService {
@@ -19,8 +20,8 @@ class AddService {
         data: {"amount": amount},
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        final data = response.data;
-        return User.fromJson(data);
+        final json = response.data;
+        return User.fromJson(json);
       } else {
         log("Failed: ${response.statusCode} - ${response.data}");
         return null;
@@ -31,7 +32,7 @@ class AddService {
     }
   }
 
-  Future<Object?> addExpense(
+  Future<Expense?> addExpense(
     double amount,
     DateTime expenseDate,
     String category,
@@ -56,8 +57,8 @@ class AddService {
         },
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        final data = response.data;
-        return Expense.fromJson(data);
+        final json = response.data;
+        return Expense.fromJson(json);
       } else {
         log("Failed: ${response.statusCode} - ${response.data}");
         return null;
@@ -68,6 +69,49 @@ class AddService {
     }
   }
 
-  // addResreved
-  // deposite reserve
+  Future<Reserved?> addReserve(double amount, String label, String note) async {
+    if (amount <= 0) {
+      log("Invalid reserve amount");
+      return Future(() => null);
+    }
+    try {
+      final response = await dio.post(
+        "/api/reserve",
+        data: {"amount": amount, "label": label, "note": note},
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        final json = response.data;
+        return Reserved.fromJson(json);
+      } else {
+        log("Failed: ${response.statusCode} - ${response.data}");
+        return Future(() => null);
+      }
+    } on DioException catch (e) {
+      log("Network Error: $e");
+      return Future(() => null);
+    }
+  }
+
+  Future<Reserved?> addDepositeReserve(double amount, String label) async {
+    if (amount <= 0) {
+      log("invalid reserve amount!");
+      return Future(() => null);
+    }
+    try {
+      final response = await dio.post(
+        "/api/reserve/deposite",
+        data: {"amount": amount, "label": label},
+      );
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        final json = response.data;
+        return Reserved.fromJson(json);
+      } else {
+        log("Failed: ${response.statusCode} - ${response.data}");
+        return Future(() => null);
+      }
+    } on DioException catch (e) {
+      log("Network Error: $e");
+      return Future(() => null);
+    }
+  }
 }

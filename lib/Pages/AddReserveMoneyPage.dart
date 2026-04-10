@@ -5,20 +5,19 @@ import 'package:etrace/Utils/CustomeInputDecorator.dart';
 import 'package:etrace/Utils/ModerButton.dart';
 import 'package:flutter/material.dart';
 
-class AddReservePage extends StatefulWidget {
-  const AddReservePage({required this.emerald, super.key});
+class AddReserveMoneyPage extends StatefulWidget {
+  const AddReserveMoneyPage({required this.emerald, super.key});
   final Color emerald;
 
   @override
-  State<AddReservePage> createState() => _AddReservePageState();
+  State<AddReserveMoneyPage> createState() => _AddReservePageState();
 }
 
-class _AddReservePageState extends State<AddReservePage> {
+class _AddReservePageState extends State<AddReserveMoneyPage> {
   final _formKey = GlobalKey<FormState>();
 
   final amountController = TextEditingController();
   final labelController = TextEditingController();
-  final noteController = TextEditingController();
 
   final Color blackShade = const Color(0xFF1C1C1C);
 
@@ -26,7 +25,6 @@ class _AddReservePageState extends State<AddReservePage> {
   void dispose() {
     amountController.dispose();
     labelController.dispose();
-    noteController.dispose();
     super.dispose();
   }
 
@@ -88,37 +86,27 @@ class _AddReservePageState extends State<AddReservePage> {
                   return null;
                 },
               ),
-
-              const SizedBox(height: 30),
-              TextFormField(
-                controller: noteController,
-                maxLines: 3,
-                style: const TextStyle(color: Colors.white),
-                decoration: CustomeInputDecorator("Note", Icons.note),
-              ),
-              const SizedBox(height: 16),
-
-              /// Submit
+              SizedBox(height: 16),
+              // Submit
               SizedBox(
                 width: double.infinity,
                 child: ModernButton(
-                  text: "Add Reserved",
+                  text: "Add Reserve Money",
                   emerald: widget.emerald,
                   blackShade: blackShade,
                   onPressed: () async {
                     if (!_formKey.currentState!.validate()) return;
 
-                    final data = await AddService().addReserve(
+                    final data = await AddService().addDepositeReserve(
                       double.parse(amountController.text),
                       labelController.text,
-                      noteController.text,
                     );
+
                     if (data == null) {
-                      log("Failed to add reserved fund");
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: const Text(
-                            "Failed to add reserved fund",
+                            "Reserved fund Added failed!",
                             style: TextStyle(color: Color(0xFFFFFFFF)),
                           ),
                           duration: const Duration(seconds: 1),

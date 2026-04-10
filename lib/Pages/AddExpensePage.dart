@@ -226,10 +226,10 @@ class _AddExpensePageState extends State<AddExpensePage> {
                   text: "Submit Expense",
                   emerald: widget.emerald,
                   blackShade: blackShade,
-                  onPressed: () {
+                  onPressed: () async {
                     if (!_formKey.currentState!.validate()) return;
 
-                    final data = AddService().addExpense(
+                    final data = await AddService().addExpense(
                       double.parse(amountController.text),
                       DateTime.parse(dateController.text),
                       categoryController.text,
@@ -237,17 +237,30 @@ class _AddExpensePageState extends State<AddExpensePage> {
                       isReserved,
                       labelController.text,
                     );
-                    log(data.toString()); // need to clear log after testing
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: const Text(
-                          "Expense Added Successfully!",
-                          style: TextStyle(color: Color(0xFFFFFFFF)),
+                    if (data != null) {
+                      log(data.toString()); // need to clear log after testing
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text(
+                            "Expense Added Successfully!",
+                            style: TextStyle(color: Color(0xFFFFFFFF)),
+                          ),
+                          duration: const Duration(seconds: 1),
+                          backgroundColor: blackShade,
                         ),
-                        duration: const Duration(seconds: 1),
-                        backgroundColor: blackShade,
-                      ),
-                    );
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: const Text(
+                            "Failed to add expense. Try again.",
+                            style: TextStyle(color: Color(0xFFFFFFFF)),
+                          ),
+                          duration: const Duration(seconds: 1),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
                   },
                 ),
               ),

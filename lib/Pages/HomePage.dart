@@ -1,10 +1,12 @@
 import 'package:etrace/Pages/AddExpensePage.dart';
 import 'package:etrace/Pages/AddIncomePage.dart';
+import 'package:etrace/Pages/AddReserveMoneyPage.dart';
 import 'package:etrace/Pages/AddReservePage.dart';
 import 'package:etrace/Pages/ExpenseSerchPage.dart';
 import 'package:etrace/Pages/HomeContent.dart';
 import 'package:etrace/Pages/ReportPage.dart';
 import 'package:etrace/Pages/ReservePage.dart';
+import 'package:etrace/Pages/WithdrawReserveMoney.dart';
 import 'package:flutter/material.dart';
 import 'package:etrace/Pages/ExpensePage.dart';
 
@@ -204,6 +206,36 @@ class _HomePageState extends State<HomePage> {
                     context, // ✅ parent context (safe)
                     MaterialPageRoute(
                       builder: (_) => AddReservePage(emerald: widget.emerald),
+                    ),
+                  );
+                },
+              ),
+              _optionTile(
+                icon: Icons.arrow_upward,
+                color: Colors.green,
+                label: "Deposite to Reserve",
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context, // ✅ parent context (safe)
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          AddReserveMoneyPage(emerald: widget.emerald),
+                    ),
+                  );
+                },
+              ),
+              _optionTile(
+                icon: Icons.arrow_downward,
+                color: Colors.red,
+                label: "Withdraw from Reserve",
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context, // ✅ parent context (safe)
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          Withdrawreservemoney(emerald: widget.emerald),
                     ),
                   );
                 },

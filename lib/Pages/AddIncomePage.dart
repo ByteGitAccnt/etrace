@@ -80,20 +80,33 @@ class _AddIncomePageState extends State<AddIncomePage> {
                     final data = await AddService().addIncome(
                       double.parse(amountController.text),
                     );
-                    if (data != null) {
-                      log("Income addedd successfully");
-                      log(data.toString());
+                    if (data == null) {
+                      log("Failed to add income");
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: const Text(
-                            "Income Added Successfully!",
+                            "Failed to add income",
                             style: TextStyle(color: Color(0xFFFFFFFF)),
                           ),
                           duration: const Duration(seconds: 1),
-                          backgroundColor: blackShade,
+                          backgroundColor: Colors.red,
                         ),
                       );
+                      return;
                     }
+                    log("Income addedd successfully");
+                    log(data.toString());
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: const Text(
+                          "Income Added Successfully!",
+                          style: TextStyle(color: Color(0xFFFFFFFF)),
+                        ),
+                        duration: const Duration(seconds: 1),
+                        backgroundColor: blackShade,
+                      ),
+                    );
+
                     Navigator.pop(context);
                   },
                 ),

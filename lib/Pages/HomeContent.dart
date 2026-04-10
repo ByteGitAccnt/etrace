@@ -1,7 +1,10 @@
+import 'package:etrace/Utils/BalanceNotifier.dart';
 import 'package:etrace/Utils/TransactionList.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class HomeContent extends StatelessWidget {
+  // ned to omake it state ful
   const HomeContent({super.key});
 
   @override
@@ -105,8 +108,55 @@ Widget _buildBalanceCard() {
       ),
       child: Stack(
         children: [
+          Consumer(
+            builder: (context, ref, child) {
+              final balanceState = ref.watch(balanceProvider);
+
+              return balanceState.when(
+                data: (balance) => SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        "Total Balance",
+                        style: TextStyle(color: Colors.white70, fontSize: 14),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "₹ ${balance.accountBalance.toStringAsFixed(2)}",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        "Reserve Fund",
+                        style: TextStyle(color: Colors.white70, fontSize: 13),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        "₹ ${balance.reservedBalance.toStringAsFixed(2)}",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                loading: () => const CircularProgressIndicator(),
+                error: (err, _) => Text("Error: $err"),
+              );
+            },
+          ),
+
           // Content
-          Column(
+          /* Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
               Text(
@@ -137,7 +187,7 @@ Widget _buildBalanceCard() {
                 ),
               ),
             ],
-          ),
+          ), */
           //  Decorative Icon (top right)
           Positioned(
             right: 0,

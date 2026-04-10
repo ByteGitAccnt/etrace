@@ -18,6 +18,13 @@ class _ExpenseSearchPageState extends State<ExpenseSearchPage> {
   final categoryController = TextEditingController();
   final List<String> categories = ["Food", "Travel", "Fun", "Bills"];
 
+  void dispose() {
+    fromDateController.dispose();
+    toDateController.dispose();
+    categoryController.dispose();
+    super.dispose();
+  }
+
   Future<void> _pickDate(TextEditingController controller) async {
     FocusScope.of(context).unfocus();
     DateTime? picked = await showDatePicker(
