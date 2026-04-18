@@ -1,106 +1,26 @@
+import 'package:etrace/Model/Transaction.dart';
 import 'package:etrace/Utils/TransactionList.dart';
-import 'package:etrace/Utils/TransactionList.dart';
+import 'package:etrace/Utils/TransactionNotifier.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ReservePage extends StatelessWidget {
+class ReservePage extends ConsumerWidget {
   const ReservePage({super.key});
-  final List<Map<String, dynamic>> transactions = const [
-    {
-      "title": "Food",
-      "amount": 250,
-      "date": "Apr 3",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Travel",
-      "amount": 120,
-      "date": "Apr 2",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Food",
-      "amount": 250,
-      "date": "Apr 3",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Travel",
-      "amount": 120,
-      "date": "Apr 2",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-  ];
+
   final Color emerald = const Color(0xFF046A38);
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final allTransactions = ref.watch(transactionProvider);
+
+    final reserveList = allTransactions.toList(growable: true);
+
     return Scaffold(
       backgroundColor: emerald,
       body: SafeArea(
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start, // 👈 Aligns heading to the left
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- Heading ---
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
@@ -113,20 +33,51 @@ class ReservePage extends StatelessWidget {
               ),
             ),
 
-            // --- Scrollable Transaction List ---
             Expanded(
               child: TransactionList(
-                transactions: transactions.isEmpty
+                transactions: reserveList.isEmpty
                     ? [
-                        {
-                          "title": "No Reserve funds yet",
-                          "amount": 0,
-                          "date": "N/A",
-                          "icon": Icons.info_outline,
-                        },
+                        Transaction(
+                          id: 0,
+                          title: "No transactions yet",
+                          amount: 0.0,
+                          date: "",
+                          icon: Icons.info_outline,
+                        ),
                       ]
-                    : transactions,
+                    : reserveList,
                 isExpense: false,
+
+                // DELETE
+                onDelete: (tx, index) {
+                  final notifier = ref.read(transactionProvider.notifier);
+                  final messenger = ScaffoldMessenger.of(context);
+
+                  //  Trigger delete (starts timer inside notifier)
+                  notifier.delete(index);
+
+                  //  Remove any existing snackbar (prevents stacking bugs)
+                  messenger.hideCurrentSnackBar();
+
+                  final snackBar = SnackBar(
+                    content: const Text("Item deleted"),
+                    duration: const Duration(seconds: 3),
+                    action: SnackBarAction(
+                      label: "UNDO",
+                      onPressed: () {
+                        notifier.undo();
+                      },
+                    ),
+                  );
+
+                  // Show snackbar
+                  messenger.showSnackBar(snackBar);
+
+                  //  Force sync with your 3s undo window
+                  Future.delayed(const Duration(seconds: 3), () {
+                    messenger.hideCurrentSnackBar();
+                  });
+                },
               ),
             ),
           ],

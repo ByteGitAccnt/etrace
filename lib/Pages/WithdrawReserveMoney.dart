@@ -38,7 +38,7 @@ class _WithdrawreservemoneyState extends State<Withdrawreservemoney> {
         backgroundColor: widget.emerald,
         elevation: 0,
         title: const Text(
-          "Add Reserved Money",
+          "Withdraw Reserve Money",
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -92,7 +92,7 @@ class _WithdrawreservemoneyState extends State<Withdrawreservemoney> {
               SizedBox(
                 width: double.infinity,
                 child: ModernButton(
-                  text: "Add Reserve Money",
+                  text: "Withdraw Reserve Money",
                   emerald: widget.emerald,
                   blackShade: blackShade,
                   onPressed: () async {

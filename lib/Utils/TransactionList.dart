@@ -1,15 +1,22 @@
-import 'package:etrace/Utils/TransactionItem.dart';
+import 'package:etrace/Model/Transaction.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:etrace/Utils/TransactionItem.dart';
 
 class TransactionList extends StatelessWidget {
-  final List<Map<String, dynamic>> transactions;
+  final List<Transaction> transactions;
   final bool isExpense;
+  final bool enableDelete;
+  final Function(Transaction tx, int index) onDelete;
+  //final Function(double id) onDelete;
 
   const TransactionList({
-    Key? key,
+    super.key,
     required this.transactions,
+    required this.onDelete,
+    this.enableDelete = true,
     this.isExpense = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,20 +28,39 @@ class TransactionList extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
         ),
         clipBehavior: Clip.antiAlias,
-        // Use ListView.builder for scrollability and performance
         child: ListView.builder(
-          shrinkWrap:
-              true, // Allows it to be used inside other scrollables if needed
-          physics: const BouncingScrollPhysics(),
           itemCount: transactions.length,
+          physics: const BouncingScrollPhysics(),
           itemBuilder: (context, index) {
             final tx = transactions[index];
-            return TransactionItem(
-              title: tx["title"],
-              amount: tx["amount"],
-              date: tx["date"],
-              icon: tx["icon"],
-              isExpense: isExpense,
+
+            return Slidable(
+              key: ValueKey(
+                tx.id,
+              ), // Placeholder, replace with actual ID if available
+
+              endActionPane: ActionPane(
+                motion: const DrawerMotion(),
+                children: [
+                  SlidableAction(
+                    onPressed: (_) {
+                      onDelete(tx, index);
+                      //onDelete(tx["id"]);
+                      // Placeholder, replace with actual ID if available
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("${tx.title} deleted")),
+                      );
+                    },
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                    icon: Icons.delete,
+                    label: 'Delete',
+                  ),
+                ],
+              ),
+              enabled: enableDelete,
+              child: TransactionItem(transaction: tx, isExpense: isExpense),
             );
           },
         ),

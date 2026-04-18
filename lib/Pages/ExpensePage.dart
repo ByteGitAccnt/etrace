@@ -1,99 +1,20 @@
+import 'package:etrace/Model/Transaction.dart';
 import 'package:etrace/Utils/TransactionList.dart';
-import 'package:etrace/Utils/TransactionList.dart';
+import 'package:etrace/Utils/TransactionNotifier.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ExpensePage extends StatelessWidget {
+class ExpensePage extends ConsumerWidget {
   const ExpensePage({super.key});
+
   final Color emerald = const Color(0xFF046A38);
 
-  final List<Map<String, dynamic>> transactions = const [
-    {
-      "title": "Food",
-      "amount": 250,
-      "date": "Apr 3",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Travel",
-      "amount": 120,
-      "date": "Apr 2",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Food",
-      "amount": 250,
-      "date": "Apr 3",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Travel",
-      "amount": 120,
-      "date": "Apr 2",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-    {
-      "title": "Shopping",
-      "amount": 800,
-      "date": "Apr 1",
-      "icon": Icons.receipt_long,
-    },
-  ];
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final allTransactions = ref.watch(transactionProvider);
+
+    final expenseList = allTransactions.toList();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: emerald,
@@ -107,35 +28,39 @@ class ExpensePage extends StatelessWidget {
       backgroundColor: emerald,
       body: SafeArea(
         child: Column(
-          crossAxisAlignment:
-              CrossAxisAlignment.start, // 👈 Aligns heading to the left
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- Heading ---
-            /* const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                "Expenses",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-            ), */
-
-            // --- Scrollable Transaction List ---
             Expanded(
               child: TransactionList(
-                transactions: transactions.isEmpty
+                transactions: expenseList.isEmpty
                     ? [
-                        {
-                          "title": "No expenses yet",
-                          "amount": 0,
-                          "date": "N/A",
-                          "icon": Icons.info_outline,
-                        },
+                        Transaction(
+                          id: 0,
+                          title: "No expenses yet",
+                          amount: 0,
+                          date: "",
+                          icon: Icons.info_outline,
+                        ),
                       ]
-                    : transactions,
+                    : expenseList,
+
+                // 🔴 DELETE
+                onDelete: (tx, index) {
+                  ref.read(transactionProvider.notifier).delete(index);
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text("Item deleted"),
+                      duration: const Duration(seconds: 3),
+                      action: SnackBarAction(
+                        label: "UNDO",
+                        onPressed: () {
+                          ref.read(transactionProvider.notifier).undo();
+                        },
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ],

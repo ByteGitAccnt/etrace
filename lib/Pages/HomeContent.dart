@@ -1,60 +1,35 @@
+import 'package:etrace/Model/Transaction.dart';
 import 'package:etrace/Utils/BalanceNotifier.dart';
 import 'package:etrace/Utils/TransactionList.dart';
+import 'package:etrace/Utils/TransactionNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomeContent extends StatelessWidget {
-  // ned to omake it state ful
+class HomeContent extends ConsumerStatefulWidget {
   const HomeContent({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> transactions = [
-      {
-        "title": "Food",
-        "amount": 250,
-        "date": "Apr 3",
-        "icon": Icons.receipt_long,
-      },
-      {
-        "title": "Travel",
-        "amount": 120,
-        "date": "Apr 2",
-        "icon": Icons.receipt_long,
-      },
-      {
-        "title": "Shopping",
-        "amount": 800,
-        "date": "Apr 1",
-        "icon": Icons.receipt_long,
-      },
-      {
-        "title": "Shopping",
-        "amount": 800,
-        "date": "Apr 1",
-        "icon": Icons.receipt_long,
-      },
-      {
-        "title": "Shopping",
-        "amount": 800,
-        "date": "Apr 1",
-        "icon": Icons.receipt_long,
-      },
-      {
-        "title": "Shopping",
-        "amount": 800,
-        "date": "Apr 1",
-        "icon": Icons.receipt_long,
-      },
-      {
-        "title": "Shopping",
-        "amount": 800,
-        "date": "Apr 1",
-        "icon": Icons.receipt_long,
-      },
-    ];
+  ConsumerState<HomeContent> createState() => _HomeContentState();
+}
 
-    // Inside HomeContent build method:
+class _HomeContentState extends ConsumerState<HomeContent> {
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      ref.read(balanceProvider.notifier).fetchBalance();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Get data from Riverpod
+    final allTransactions = ref.watch(transactionProvider);
+
+    // Take only recent 7
+    final recentTransactions = allTransactions.take(7).toList();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -72,9 +47,24 @@ class HomeContent extends StatelessWidget {
             ),
           ),
         ),
+
         Expanded(
-          // This forces the list to take up the remaining space and be scrollable
-          child: TransactionList(transactions: transactions),
+          child: TransactionList(
+            transactions: recentTransactions.isEmpty
+                ? [
+                    Transaction(
+                      id: 0,
+                      title: "No transactions yet",
+                      amount: 0,
+                      date: "",
+                      icon: Icons.info_outline,
+                    ),
+                  ]
+                : recentTransactions,
+
+            onDelete: (tx, index) {}, // not needed here
+            enableDelete: false, // ✅ disable delete
+          ),
         ),
       ],
     );
@@ -156,38 +146,6 @@ Widget _buildBalanceCard() {
           ),
 
           // Content
-          /* Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text(
-                "Total Balance",
-                style: TextStyle(color: Colors.white70, fontSize: 14),
-              ),
-              SizedBox(height: 8),
-              Text(
-                "₹ 0.00",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 16),
-              Text(
-                "Reserve Fund",
-                style: TextStyle(color: Colors.white70, fontSize: 13),
-              ),
-              SizedBox(height: 6),
-              Text(
-                "₹ 0.00",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ), */
           //  Decorative Icon (top right)
           Positioned(
             right: 0,
