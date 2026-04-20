@@ -20,6 +20,22 @@ class CategoryNotifier extends StateNotifier<CategoryState> {
       state = state.copyWith(isLoading: false);
     }
   }
+
+  void addIfNotExists(String categoryName) {
+    final exists = state.items.any(
+      (c) => c.name.toLowerCase() == categoryName.toLowerCase(),
+    );
+
+    if (exists) return;
+
+    // temporary ID (backend will have real one later)
+    final newCategory = Category(
+      id: DateTime.now().millisecondsSinceEpoch, // temp
+      name: categoryName,
+    );
+
+    state = state.copyWith(items: [...state.items, newCategory]);
+  }
 }
 
 final categoryProvider = StateNotifierProvider<CategoryNotifier, CategoryState>(

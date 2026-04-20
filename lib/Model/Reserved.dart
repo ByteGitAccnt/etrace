@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Reserved {
   final int id;
   final String label;
@@ -19,6 +21,16 @@ class Reserved {
       amount: (json['amount'] as num).toDouble(),
       note: json['note'] as String,
     );
+  }
+
+  static List<Reserved> listFromJson(dynamic data) {
+    if (data is String) {
+      final decoded = json.decode(data) as List;
+      return decoded.map((e) => Reserved.fromJson(e)).toList();
+    } else if (data is List) {
+      return data.map((e) => Reserved.fromJson(e)).toList();
+    }
+    return [];
   }
 
   // Convert Reserved → JSON

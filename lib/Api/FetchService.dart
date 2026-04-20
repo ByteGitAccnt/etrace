@@ -9,7 +9,6 @@ class FetchService {
   final Dio dio = ApiClient().dio;
 
   /// Fetch all expenses with optional pagination
-  /// Set limit to a high number or 0 to get all items
   Future<List<Expense>> fetchExpenses({int page = 0, int size = 10}) async {
     try {
       try {
@@ -41,25 +40,16 @@ class FetchService {
   }
 
   /// Fetch all reserves with optional pagination
-  /// Set limit to a high number or 0 to get all items
-  Future<List<Reserved>> fetchReserves({
-    int limit = 1000, // Fetch up to 1000 items instead of default 10
-    int offset = 0,
-  }) async {
+  Future<List<Reserved>> fetchReserves() async {
     try {
-      final response = await dio.get(
-        "/api/reserve",
-        queryParameters: {'limit': limit, 'offset': offset},
-      );
+      final response = await dio.get("/api/reserve");
 
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        final List<dynamic> jsonList = response.data is List
+        final dynamic jsonList = response.data is List
             ? response.data
-            : response.data['data'] ?? response.data['reserves'] ?? [];
+            : response.data['data'] ?? response.data['expenses'] ?? [];
 
-        return jsonList
-            .map((item) => Reserved.fromJson(item as Map<String, dynamic>))
-            .toList();
+        return Reserved.listFromJson(jsonList);
       } else {
         log(
           "Failed to fetch reserves: ${response.statusCode} - ${response.data}",
@@ -73,10 +63,10 @@ class FetchService {
   }
 
   /// Fetch expenses by category with pagination
-  Future<List<Expense>> fetchExpensesByCategoryAndDateRage(
+  Future<List<Expense>> fetchExpensesByCategoryAndDateRange(
     DateTime fromDate,
     DateTime toDate,
-    String category, {
+    int category, {
     int page = 0,
     int size = 10,
   }) async {
