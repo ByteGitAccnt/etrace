@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
 }
 /* 
 TODO:
-- avoid two notifier , if possible make it one 
+- Categ7ory fetching for id
 - deletion of expense and reserve 
 - exense serach and fetch with offset and paging and without offset and paging 
 - resreve fetching 

@@ -1,7 +1,6 @@
-import 'package:etrace/Model/Transaction.dart';
 import 'package:etrace/Notifiers/BalanceNotifier.dart';
-import 'package:etrace/Utils/TransactionList.dart';
 import 'package:etrace/Notifiers/TransactionNotifier.dart';
+import 'package:etrace/Utils/TransactionList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,16 +18,18 @@ class _HomeContentState extends ConsumerState<HomeContent> {
 
     Future.microtask(() {
       ref.read(balanceProvider.notifier).fetchBalance();
+
+      // ✅ ensure transactions are loaded
+      ref.read(transactionProvider.notifier).load();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Get data from Riverpod
-    final allTransactions = ref.watch(transactionProvider);
+    final state = ref.watch(transactionProvider);
 
-    // Take only recent 7
-    final recentTransactions = allTransactions.take(7).toList();
+    // ✅ get from state.items
+    final recentTransactions = state.items.take(7).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,6 +37,7 @@ class _HomeContentState extends ConsumerState<HomeContent> {
         const SizedBox(height: 24),
         _buildBalanceCard(),
         const SizedBox(height: 20),
+
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: Text(
@@ -49,22 +51,18 @@ class _HomeContentState extends ConsumerState<HomeContent> {
         ),
 
         Expanded(
-          child: TransactionList(
-            transactions: recentTransactions.isEmpty
-                ? [
-                    Transaction(
-                      id: 0,
-                      title: "No transactions yet",
-                      amount: 0,
-                      date: "",
-                      icon: Icons.info_outline,
-                    ),
-                  ]
-                : recentTransactions,
-
-            onDelete: (tx, index) {}, // not needed here
-            enableDelete: false, // ✅ disable delete
-          ),
+          child: recentTransactions.isEmpty
+              ? const Center(
+                  child: Text(
+                    "No transactions yet",
+                    style: TextStyle(color: Colors.white70),
+                  ),
+                )
+              : TransactionList(
+                  transactions: recentTransactions,
+                  enableDelete: false,
+                  onDelete: (_, __) {},
+                ),
         ),
       ],
     );
@@ -161,3 +159,80 @@ Widget _buildBalanceCard() {
     ),
   );
 }
+
+
+
+/* import 'package:etrace/Model/Transaction.dart';
+import 'package:etrace/Notifiers/BalanceNotifier.dart';
+import 'package:etrace/Utils/TransactionList.dart';
+import 'package:etrace/Notifiers/TransactionNotifier_old.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class HomeContent extends ConsumerStatefulWidget {
+  const HomeContent({super.key});
+
+  @override
+  ConsumerState<HomeContent> createState() => _HomeContentState();
+}
+
+class _HomeContentState extends ConsumerState<HomeContent> {
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      ref.read(balanceProvider.notifier).fetchBalance();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Get data from Riverpod
+    final allTransactions = ref.watch(transactionProvider);
+
+    // Take only recent 7
+    final recentTransactions = allTransactions.take(7).toList();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 24),
+        _buildBalanceCard(),
+        const SizedBox(height: 20),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            "Recent Expenses",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+              color: Colors.white,
+            ),
+          ),
+        ),
+
+        Expanded(
+          child: TransactionList(
+            transactions: recentTransactions.isEmpty
+                ? [
+                    Transaction(
+                      id: 0,
+                      title: "No transactions yet",
+                      amount: 0,
+                      date: "",
+                      icon: Icons.info_outline,
+                    ),
+                  ]
+                : recentTransactions,
+
+            onDelete: (tx, index) {}, // not needed here
+            enableDelete: false, // ✅ disable delete
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+ */
