@@ -10,30 +10,28 @@ class FetchService {
 
   /// Fetch all expenses with optional pagination
   /// Set limit to a high number or 0 to get all items
-  Future<List<Expense>> fetchExpenses({
-    int limit = 1000, // Fetch up to 1000 items instead of default 10
-    int offset = 0,
-    int page = 0,
-    int size = 10,
-  }) async {
+  Future<List<Expense>> fetchExpenses({int page = 0, int size = 10}) async {
     try {
-      final response = await dio.get(
-        "/api/expense",
-        queryParameters: {'limit': limit, 'offset': offset},
-      );
-
-      if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        final List<dynamic> jsonList = response.data is List
-            ? response.data
-            : response.data['data'] ?? response.data['expenses'] ?? [];
-
-        return jsonList
-            .map((item) => Expense.fromJson(item as Map<String, dynamic>))
-            .toList();
-      } else {
-        log(
-          "Failed to fetch expenses: ${response.statusCode} - ${response.data}",
+      try {
+        final response = await dio.get(
+          "/api/expense",
+          queryParameters: {'page': page, 'size': size},
         );
+
+        if (response.statusCode! >= 200 && response.statusCode! < 300) {
+          final dynamic jsonList = response.data is List
+              ? response.data
+              : response.data['data'] ?? response.data['expenses'] ?? [];
+
+          return Expense.listFromJson(jsonList);
+        } else {
+          log(
+            "Failed to fetch expenses: ${response.statusCode} - ${response.data}",
+          );
+          return [];
+        }
+      } on DioException catch (e) {
+        log("Network Error fetching expenses: $e");
         return [];
       }
     } on DioException catch (e) {
@@ -75,29 +73,31 @@ class FetchService {
   }
 
   /// Fetch expenses by category with pagination
-  Future<List<Expense>> fetchExpensesByCategory(
+  Future<List<Expense>> fetchExpensesByCategoryAndDateRage(
+    DateTime fromDate,
+    DateTime toDate,
     String category, {
-    int limit = 1000,
-    int offset = 0,
+    int page = 0,
+    int size = 10,
   }) async {
     try {
       final response = await dio.get(
         "/api/expense",
-        queryParameters: {
-          'category': category,
-          'limit': limit,
-          'offset': offset,
+        data: {
+          "startDate": fromDate.toIso8601String(),
+          "endDate": toDate.toIso8601String(),
+          "catid": category,
+          "page": page,
+          "size": size,
         },
       );
 
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        final List<dynamic> jsonList = response.data is List
+        final dynamic jsonList = response.data is List
             ? response.data
             : response.data['data'] ?? response.data['expenses'] ?? [];
 
-        return jsonList
-            .map((item) => Expense.fromJson(item as Map<String, dynamic>))
-            .toList();
+        return Expense.listFromJson(jsonList);
       } else {
         log("Failed to fetch expenses by category: ${response.statusCode}");
         return [];
@@ -112,28 +112,26 @@ class FetchService {
   Future<List<Expense>> fetchExpensesByDateRange(
     DateTime fromDate,
     DateTime toDate, {
-    int limit = 1000,
-    int offset = 0,
+    int page = 0,
+    int size = 0,
   }) async {
     try {
       final response = await dio.get(
         "/api/expense",
-        queryParameters: {
-          'fromDate': fromDate.toIso8601String(),
-          'toDate': toDate.toIso8601String(),
-          'limit': limit,
-          'offset': offset,
+        data: {
+          "startDate": fromDate.toIso8601String(),
+          "endDate": toDate.toIso8601String(),
+          "page": page,
+          "size": size,
         },
       );
 
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
-        final List<dynamic> jsonList = response.data is List
+        final dynamic jsonList = response.data is List
             ? response.data
             : response.data['data'] ?? response.data['expenses'] ?? [];
 
-        return jsonList
-            .map((item) => Expense.fromJson(item as Map<String, dynamic>))
-            .toList();
+        return Expense.listFromJson(jsonList);
       } else {
         log("Failed to fetch expenses by date range: ${response.statusCode}");
         return [];
