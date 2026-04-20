@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:etrace/Api/ApiClient.dart';
+import 'package:etrace/Model/Category.dart';
 import 'package:etrace/Model/Expense.dart';
 import 'package:etrace/Model/Reserved.dart';
 
@@ -72,7 +73,7 @@ class FetchService {
   }) async {
     try {
       final response = await dio.get(
-        "/api/expense",
+        "/api/expense/category",
         data: {
           "startDate": fromDate.toIso8601String(),
           "endDate": toDate.toIso8601String(),
@@ -107,7 +108,7 @@ class FetchService {
   }) async {
     try {
       final response = await dio.get(
-        "/api/expense",
+        "/api/expense/date",
         data: {
           "startDate": fromDate.toIso8601String(),
           "endDate": toDate.toIso8601String(),
@@ -128,6 +129,25 @@ class FetchService {
       }
     } on DioException catch (e) {
       log("Network Error fetching expenses by date range: $e");
+      return [];
+    }
+  }
+
+  Future<List<Category>> fetchCategories() async {
+    try {
+      final response = await dio.get("/api/category");
+      if (response.statusCode! >= 200 && response.statusCode! < 300) {
+        final dynamic jsonList = response.data is List
+            ? response.data
+            : response.data['data'] ?? response.data['categories'] ?? [];
+
+        return Category.listFromJson(jsonList);
+      } else {
+        log("Failed to fetch categories: ${response.statusCode}");
+        return [];
+      }
+    } on DioException catch (e) {
+      log("Network Error fetching categories: $e");
       return [];
     }
   }

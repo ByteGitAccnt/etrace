@@ -70,7 +70,6 @@ class MyApp extends StatelessWidget {
 }
 /* 
 TODO:
-- deletion of expense and reserve 
 - logout and token managment 
 - deletion logic need to be implemented 
 TESTING:
@@ -79,8 +78,8 @@ TESTING:
 - home page - Done
 - balance fetching - pending 
 - reserve fetching  - pending
+- category fetching - pending 
 - exense serach and fetch with offset and paging and without offset and paging - pending
-- Withdraw from reserve - stays with update - pending
 - Expense add - pending
 - Reserve add - pending
 - income add - pending
