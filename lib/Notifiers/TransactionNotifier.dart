@@ -5,6 +5,7 @@ import 'package:etrace/Model/Expense.dart';
 import 'package:etrace/Model/Transaction.dart';
 import 'package:etrace/Notifiers/TransactionState.dart';
 import 'package:etrace/Utils/mapCategoryToIcon.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 class TransactionNotifier extends StateNotifier<TransactionState> {
@@ -13,11 +14,7 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
   Timer? _undoTimer;
 
   //  LOAD (initial + search/filter)
-  Future<void> load({
-    String? fromDate,
-    String? toDate,
-    String? category,
-  }) async {
+  Future<void> load({String? fromDate, String? toDate, int? category}) async {
     state = state.copyWith(
       isLoading: true,
       page: 0,
@@ -32,7 +29,7 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
     try {
       //we decide the searching combination here
       // Replace with real API
-      List<Transaction> data = []; // mock
+      /* List<Transaction> data = []; // mock
       await Future.delayed(const Duration(seconds: 1));
       if (fromDate == null && toDate == null && category == null) {
         List<Expense> expenses = await FetchService().fetchExpenses(
@@ -88,8 +85,8 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
               ),
             )
             .toList();
-      }
-      /* data = [
+      } */
+      final data = [
         Transaction(
           id: 1,
           title: "Mock",
@@ -140,7 +137,7 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
           icon: Icons.lightbulb,
           isExpense: false,
         ),
-      ]; */
+      ];
 
       state = state.copyWith(
         items: data,

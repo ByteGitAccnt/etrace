@@ -2,7 +2,7 @@ import 'package:etrace/Pages/AddExpensePage.dart';
 import 'package:etrace/Pages/AddIncomePage.dart';
 import 'package:etrace/Pages/AddReserveMoneyPage.dart';
 import 'package:etrace/Pages/AddReservePage.dart';
-import 'package:etrace/Pages/ExpenseSerchPage.dart';
+import 'package:etrace/Pages/ExpenseSearchPage.dart';
 import 'package:etrace/Pages/HomeContent.dart';
 import 'package:etrace/Pages/ReportPage.dart';
 import 'package:etrace/Pages/ReservePage.dart';

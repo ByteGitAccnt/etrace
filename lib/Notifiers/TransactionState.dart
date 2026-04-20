@@ -11,7 +11,7 @@ class TransactionState {
   // filters (acts as "search")
   final String? fromDate;
   final String? toDate;
-  final String? category;
+  final int? category;
 
   // undo
   final Transaction? lastDeleted;
@@ -39,7 +39,7 @@ class TransactionState {
     bool? isLoading,
     String? fromDate,
     String? toDate,
-    String? category,
+    int? category,
     Transaction? lastDeleted,
     int? lastDeletedIndex,
     String? error,
