@@ -1,20 +1,23 @@
 import 'dart:developer';
 
 import 'package:etrace/Api/AddService.dart';
+import 'package:etrace/Model/Category.dart';
+import 'package:etrace/Notifiers/CategoryNotifier.dart';
 import 'package:etrace/Utils/CustomeInputDecorator.dart';
 import 'package:etrace/Utils/ModerButton.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 
-class AddExpensePage extends StatefulWidget {
-  AddExpensePage({required this.emerald, super.key});
+class AddExpensePage extends ConsumerStatefulWidget {
+  const AddExpensePage({required this.emerald, super.key});
   final Color emerald;
 
   @override
-  State<AddExpensePage> createState() => _AddExpensePageState();
+  ConsumerState<AddExpensePage> createState() => _AddExpensePageState();
 }
 
-class _AddExpensePageState extends State<AddExpensePage> {
+class _AddExpensePageState extends ConsumerState<AddExpensePage> {
   final _formKey = GlobalKey<FormState>();
 
   final amountController = TextEditingController();
@@ -26,8 +29,6 @@ class _AddExpensePageState extends State<AddExpensePage> {
   String? selectedCategory;
   bool isReserved = false;
 
-  final List<String> categories = ["Food", "Travel", "Fun", "Bills"];
-
   final Color blackShade = const Color(0xFF1C1C1C);
 
   @override
@@ -38,6 +39,15 @@ class _AddExpensePageState extends State<AddExpensePage> {
     dateController.dispose();
     categoryController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      ref.read(categoryProvider.notifier).load();
+    });
   }
 
   @override
@@ -106,47 +116,55 @@ class _AddExpensePageState extends State<AddExpensePage> {
               const SizedBox(height: 16),
 
               /// Category
-              Autocomplete<String>(
-                optionsBuilder: (TextEditingValue textEditingValue) {
-                  if (textEditingValue.text.isEmpty) {
-                    return categories;
-                  }
-                  return categories.where(
-                    (category) => category.toLowerCase().contains(
-                      textEditingValue.text.toLowerCase(),
-                    ),
-                  );
-                },
-                onSelected: (selection) {
-                  categoryController.text = selection;
-                },
-                fieldViewBuilder:
-                    (context, controller, focusNode, onFieldSubmitted) {
-                      return TextFormField(
-                        controller: controller,
-                        focusNode: focusNode,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: CustomeInputDecorator(
-                          "Category",
-                          Icons.category,
+              Consumer(
+                builder: (context, ref, _) {
+                  final categoryState = ref.watch(categoryProvider);
+                  final categories = categoryState.items;
+
+                  return Autocomplete<Category>(
+                    displayStringForOption: (c) => c.name,
+
+                    optionsBuilder: (text) {
+                      if (text.text.isEmpty) return categories;
+
+                      return categories.where(
+                        (c) => c.name.toLowerCase().contains(
+                          text.text.toLowerCase(),
                         ),
-                        validator: (value) => value == null || value.isEmpty
-                            ? "Enter category"
-                            : null,
-                        onFieldSubmitted: (value) {
-                          // If user presses enter with a custom value
-                          categoryController.text = value;
-                        },
-                        onChanged: (value) {
-                          // Keep controller in sync with typed text
-                          categoryController.text = value;
-                        },
                       );
                     },
+
+                    onSelected: (category) {
+                      categoryController.text = category.name;
+                    },
+
+                    fieldViewBuilder:
+                        (context, controller, focusNode, onFieldSubmitted) {
+                          return TextFormField(
+                            controller: controller,
+                            focusNode: focusNode,
+                            style: const TextStyle(color: Colors.white),
+                            decoration: CustomeInputDecorator(
+                              "Category",
+                              Icons.category,
+                            ),
+                            validator: (value) => value == null || value.isEmpty
+                                ? "Enter category"
+                                : null,
+
+                            // IMPORTANT: allow free typing
+                            onChanged: (value) {
+                              categoryController.text = value;
+                            },
+                          );
+                        },
+                  );
+                },
               ),
+
               const SizedBox(height: 16),
 
-              /// Note
+              // Note
               TextFormField(
                 controller: noteController,
                 maxLines: 3,
@@ -155,7 +173,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
               ),
               const SizedBox(height: 16),
 
-              /// Reserved Radio
+              // Reserved Radio
               Row(
                 children: [
                   const Text(
@@ -204,7 +222,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
               ),
               const SizedBox(height: 16),
 
-              /// Label (conditional)
+              //Label (conditional)
               if (isReserved)
                 TextFormField(
                   controller: labelController,
@@ -238,6 +256,7 @@ class _AddExpensePageState extends State<AddExpensePage> {
                       labelController.text,
                     );
                     if (data != null) {
+                      print(data.categoryName);
                       log(data.toString()); // need to clear log after testing
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
