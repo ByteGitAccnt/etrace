@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:etrace/Api/FetchService.dart';
 import 'package:etrace/Model/Expense.dart';
+import 'package:etrace/Model/Reserved.dart';
 import 'package:etrace/Model/Transaction.dart';
 import 'package:etrace/Notifiers/TransactionState.dart';
 import 'package:etrace/Utils/mapCategoryToIcon.dart';
@@ -14,7 +15,12 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
   Timer? _undoTimer;
 
   //  LOAD (initial + search/filter)
-  Future<void> load({String? fromDate, String? toDate, int? category}) async {
+  Future<void> load({
+    String? fromDate,
+    String? toDate,
+    int? category,
+    bool isExpense = true,
+  }) async {
     state = state.copyWith(
       isLoading: true,
       page: 0,
@@ -29,59 +35,23 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
     try {
       //we decide the searching combination here
       // Replace with real API
-      /* List<Transaction> data = []; // mock
+      /* List<Transaction> data = []; // uncomment after all api implementaion is done 
       await Future.delayed(const Duration(seconds: 1));
-      if (fromDate == null && toDate == null && category == null) {
-        List<Expense> expenses = await FetchService().fetchExpenses(
-          page: state.page,
-          size: 10,
-        );
-        data = expenses
+      if (isExpense) {
+        data = await _fetchExpenses(fromDate, toDate, category, state);
+      } else {
+        // Implement reserve fetching logic here
+        List<Reserved> reserves = await FetchService().fetchReserves();
+        data = reserves
             .map(
-              (e) => Transaction(
-                id: e.id,
-                title: e.categoryName,
-                amount: e.amount,
-                date: e.expenseDate.toString(),
-                icon: mapCategoryToIcon(e.categoryName),
-              ),
-            )
-            .toList();
-      } else if (fromDate != null && toDate != null && category == null) {
-        // Implement date range filtering logic here
-        List<Expense> expenses = await FetchService().fetchExpensesByDateRange(
-          DateTime.parse(fromDate),
-          DateTime.parse(toDate),
-          page: state.page,
-          size: 10,
-        );
-        data = expenses
-            .map(
-              (e) => Transaction(
-                id: e.id,
-                title: e.categoryName,
-                amount: e.amount,
-                date: e.expenseDate.toString(),
-                icon: mapCategoryToIcon(e.categoryName),
-              ),
-            )
-            .toList();
-      } else if (category != null && fromDate != null && toDate != null) {
-        // Implement category filtering logic here
-        List<Expense> expenses = await FetchService().fetchExpensesByDateRange(
-          DateTime.parse(fromDate),
-          DateTime.parse(toDate),
-          page: state.page,
-          size: 10,
-        );
-        data = expenses
-            .map(
-              (e) => Transaction(
-                id: e.id,
-                title: e.categoryName,
-                amount: e.amount,
-                date: e.expenseDate.toString(),
-                icon: mapCategoryToIcon(e.categoryName),
+              (r) => Transaction(
+                id: r.id,
+                title: r.label,
+                amount: r.amount,
+                date: "N/A", // Replace with actual date if available
+                icon: Icons
+                    .account_balance_wallet, // Use a generic icon for reserves
+                isExpense: false,
               ),
             )
             .toList();
@@ -150,17 +120,22 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
     }
   }
 
-  // 🔹 PAGINATION
+  // PAGINATION
   Future<void> fetchMore() async {
     if (state.isLoading || !state.hasMore) return;
 
     state = state.copyWith(isLoading: true);
 
     try {
-      //  Replace with real API using:
+      //  real API using:
       // state.page, state.fromDate, state.toDate, state.category
 
-      final moreData = <Transaction>[]; // mock
+      final moreData = await _fetchExpenses(
+        state.fromDate,
+        state.toDate,
+        state.category,
+        state,
+      );
 
       state = state.copyWith(
         items: [...state.items, ...moreData],
@@ -216,3 +191,87 @@ final transactionProvider =
     StateNotifierProvider<TransactionNotifier, TransactionState>(
       (ref) => TransactionNotifier(),
     );
+
+Future<List<Transaction>> _fetchExpenses(
+  String? fromDate,
+  String? toDate,
+  int? category,
+  dynamic state,
+) async {
+  List<Transaction> data = [];
+  if (fromDate == null && toDate == null && category == null) {
+    List<Expense> expenses = await FetchService().fetchExpenses(
+      page: state.page,
+      size: 10,
+    );
+    data = expenses
+        .map(
+          (e) => Transaction(
+            id: e.id,
+            title: e.categoryName,
+            amount: e.amount,
+            date: e.expenseDate.toString(),
+            icon: mapCategoryToIcon(e.categoryName),
+          ),
+        )
+        .toList();
+  } else if (fromDate != null && toDate != null && category == null) {
+    // Implement date range filtering logic here
+    List<Expense> expenses = await FetchService().fetchExpensesByDateRange(
+      DateTime.parse(fromDate),
+      DateTime.parse(toDate),
+      page: state.page,
+      size: 10,
+    );
+    data = expenses
+        .map(
+          (e) => Transaction(
+            id: e.id,
+            title: e.categoryName,
+            amount: e.amount,
+            date: e.expenseDate.toString(),
+            icon: mapCategoryToIcon(e.categoryName),
+          ),
+        )
+        .toList();
+  } else if (category != null && fromDate != null && toDate != null) {
+    // Implement category filtering logic here
+    List<Expense> expenses = await FetchService()
+        .fetchExpensesByCategoryAndDateRange(
+          DateTime.parse(fromDate),
+          DateTime.parse(toDate),
+          category,
+          page: state.page,
+          size: 10,
+        );
+    data = expenses
+        .map(
+          (e) => Transaction(
+            id: e.id,
+            title: e.categoryName,
+            amount: e.amount,
+            date: e.expenseDate.toString(),
+            icon: mapCategoryToIcon(e.categoryName),
+          ),
+        )
+        .toList();
+  } else {
+    // Handle other combinations or default case
+    List<Expense> expenses = await FetchService().fetchExpenses(
+      page: state.page,
+      size: 10,
+    );
+    data = expenses
+        .map(
+          (e) => Transaction(
+            id: e.id,
+            title: e.categoryName,
+            amount: e.amount,
+            date: e.expenseDate.toString(),
+            icon: mapCategoryToIcon(e.categoryName),
+          ),
+        )
+        .toList();
+  }
+  return data;
+}

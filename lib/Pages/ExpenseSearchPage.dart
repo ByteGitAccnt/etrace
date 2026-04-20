@@ -23,8 +23,6 @@ class _ExpenseSearchPageState extends ConsumerState<ExpenseSearchPage> {
   final categoryController = TextEditingController();
   Category? selectedCategory;
 
-  final List<String> categories = ["Food", "Travel", "Fun", "Bills"];
-
   @override
   void dispose() {
     fromDateController.dispose();
@@ -60,12 +58,11 @@ class _ExpenseSearchPageState extends ConsumerState<ExpenseSearchPage> {
   Future<void> _searchExpenses(BuildContext context) async {
     final fromDate = fromDateController.text.trim();
     final toDate = toDateController.text.trim();
-    final category = categoryController.text.trim();
 
     final hasFrom = fromDate.isNotEmpty;
     final hasTo = toDate.isNotEmpty;
 
-    // 🔴 Only validation UI should do
+    //  Only validation UI should do
     if (hasFrom != hasTo) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -75,7 +72,7 @@ class _ExpenseSearchPageState extends ConsumerState<ExpenseSearchPage> {
       return;
     }
 
-    // ✅ Single unified call
+    //  Single unified call
     await ref
         .read(transactionProvider.notifier)
         .load(
@@ -84,7 +81,7 @@ class _ExpenseSearchPageState extends ConsumerState<ExpenseSearchPage> {
           category: selectedCategory?.id,
         );
 
-    // ✅ Navigate after state is updated
+    //  Navigate after state is updated
     Navigator.pushNamed(context, '/searchResults');
   }
 

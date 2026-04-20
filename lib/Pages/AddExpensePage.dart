@@ -258,6 +258,9 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
                     if (data != null) {
                       print(data.categoryName);
                       log(data.toString()); // need to clear log after testing
+                      ref
+                          .read(categoryProvider.notifier)
+                          .addIfNotExists(categoryController.text);
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: const Text(
