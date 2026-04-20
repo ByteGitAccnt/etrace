@@ -1,6 +1,6 @@
 import 'package:etrace/Model/Transaction.dart';
 import 'package:etrace/Utils/TransactionList.dart';
-import 'package:etrace/Utils/TransactionNotifier.dart';
+import 'package:etrace/Notifiers/TransactionNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -13,7 +13,7 @@ class ReservePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final allTransactions = ref.watch(transactionProvider);
 
-    final reserveList = allTransactions.toList(growable: true);
+    final reserveList = allTransactions.toList();
 
     return Scaffold(
       backgroundColor: emerald,
@@ -54,7 +54,7 @@ class ReservePage extends ConsumerWidget {
                   final messenger = ScaffoldMessenger.of(context);
 
                   //  Trigger delete (starts timer inside notifier)
-                  notifier.delete(index);
+                  notifier.deleteById(index);
 
                   //  Remove any existing snackbar (prevents stacking bugs)
                   messenger.hideCurrentSnackBar();

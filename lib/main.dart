@@ -68,3 +68,22 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+/* 
+TODO:
+- avoid two notifier , if possible make it one 
+- deletion of expense and reserve 
+- exense serach and fetch with offset and paging and without offset and paging 
+- resreve fetching 
+- Withdraw from reserve - stays with update - Done , 
+- logout and token managment 
+- deletion logic need to be implemented 
+TESTING:
+- login - Done
+- register - Done
+- home page - Done
+- Expense add - pending
+- Reserve add - pending
+- income add - pending
+- reserve withdraw - pending
+- reserve deposite - pending
+ */

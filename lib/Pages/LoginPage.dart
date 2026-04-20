@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:etrace/Api/AuthService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:etrace/Utils/ModerButton.dart';

@@ -1,7 +1,7 @@
 import 'package:etrace/Model/Transaction.dart';
-import 'package:etrace/Utils/BalanceNotifier.dart';
+import 'package:etrace/Notifiers/BalanceNotifier.dart';
 import 'package:etrace/Utils/TransactionList.dart';
-import 'package:etrace/Utils/TransactionNotifier.dart';
+import 'package:etrace/Notifiers/TransactionNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

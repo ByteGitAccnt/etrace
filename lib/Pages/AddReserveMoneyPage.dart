@@ -37,7 +37,7 @@ class _AddReservePageState extends State<AddReserveMoneyPage> {
         backgroundColor: widget.emerald,
         elevation: 0,
         title: const Text(
-          "Add Reserved Money",
+          "Deposite to Reserve",
           style: TextStyle(color: Colors.white),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -91,7 +91,7 @@ class _AddReservePageState extends State<AddReserveMoneyPage> {
               SizedBox(
                 width: double.infinity,
                 child: ModernButton(
-                  text: "Add Reserve Money",
+                  text: "Deposite to Reserve",
                   emerald: widget.emerald,
                   blackShade: blackShade,
                   onPressed: () async {

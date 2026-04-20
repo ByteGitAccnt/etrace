@@ -1,17 +1,19 @@
+import 'package:etrace/Notifiers/SearchNotifier.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:etrace/Utils/CustomeInputDecorator.dart';
 import 'package:etrace/Utils/ModerButton.dart';
 
-class ExpenseSearchPage extends StatefulWidget {
+class ExpenseSearchPage extends ConsumerStatefulWidget {
   const ExpenseSearchPage({required this.emerald, super.key});
   final Color emerald;
 
   @override
-  State<ExpenseSearchPage> createState() => _ExpenseSearchPageState();
+  ConsumerState<ExpenseSearchPage> createState() => _ExpenseSearchPageState();
 }
 
-class _ExpenseSearchPageState extends State<ExpenseSearchPage> {
+class _ExpenseSearchPageState extends ConsumerState<ExpenseSearchPage> {
   final _formKey = GlobalKey<FormState>();
   final fromDateController = TextEditingController();
   final toDateController = TextEditingController();
@@ -22,6 +24,7 @@ class _ExpenseSearchPageState extends State<ExpenseSearchPage> {
     fromDateController.dispose();
     toDateController.dispose();
     categoryController.dispose();
+
     super.dispose();
   }
 
@@ -38,24 +41,26 @@ class _ExpenseSearchPageState extends State<ExpenseSearchPage> {
     }
   }
 
-  void _searchExpenses() {
+  Future<void> _searchExpenses(BuildContext context) async {
     final fromDate = fromDateController.text;
     final toDate = toDateController.text;
     final category = categoryController.text;
 
-    if (fromDate.isEmpty && toDate.isEmpty) {
-      // Case 1: No dates → fetch all expenses (paged)
-      debugPrint("Fetching all expenses with pagination...");
-    } else if (category.isNotEmpty &&
-        fromDate.isNotEmpty &&
-        toDate.isNotEmpty) {
-      // Case 4: Category + Date Range → filter by both
-      debugPrint("Filtering $category expenses from $fromDate to $toDate");
-    } else if (fromDate.isNotEmpty && toDate.isNotEmpty) {
-      // Case 2: Both dates → filter by range
-      debugPrint("Filtering expenses from $fromDate to $toDate");
+    final hasFrom = fromDate.isNotEmpty;
+    final hasTo = toDate.isNotEmpty;
+    final hasCategory = category.isNotEmpty;
+
+    if (!hasFrom && !hasTo && !hasCategory) {
+      await ref.read(searchProvider.notifier).search();
+    } else if (hasFrom && hasTo && !hasCategory) {
+      await ref
+          .read(searchProvider.notifier)
+          .search(fromDate: fromDate, toDate: toDate);
+    } else if (hasFrom && hasTo && hasCategory) {
+      await ref
+          .read(searchProvider.notifier)
+          .search(fromDate: fromDate, toDate: toDate, category: category);
     } else {
-      // Case 3: Only one date entered → show error
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -63,6 +68,7 @@ class _ExpenseSearchPageState extends State<ExpenseSearchPage> {
           ),
         ),
       );
+      return;
     }
   }
 
@@ -165,9 +171,9 @@ class _ExpenseSearchPageState extends State<ExpenseSearchPage> {
                   text: "Search",
                   emerald: widget.emerald,
                   blackShade: Colors.black,
-                  onPressed: () => {
-                    _searchExpenses(),
-                    Navigator.pushNamed(context, '/searchResults'),
+                  onPressed: () async {
+                    await _searchExpenses(context);
+                    Navigator.pushNamed(context, '/searchResults');
                   },
                 ),
               ),

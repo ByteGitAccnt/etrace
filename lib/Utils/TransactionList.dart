@@ -8,7 +8,9 @@ class TransactionList extends StatelessWidget {
   final bool isExpense;
   final bool enableDelete;
   final Function(Transaction tx, int index) onDelete;
-  //final Function(double id) onDelete;
+
+  // ScrollController (optional)
+  final ScrollController? controller;
 
   const TransactionList({
     super.key,
@@ -16,6 +18,7 @@ class TransactionList extends StatelessWidget {
     required this.onDelete,
     this.enableDelete = true,
     this.isExpense = true,
+    this.controller,
   });
 
   @override
@@ -29,15 +32,16 @@ class TransactionList extends StatelessWidget {
         ),
         clipBehavior: Clip.antiAlias,
         child: ListView.builder(
+          //CHANGE: attach controller
+          controller: controller,
+
           itemCount: transactions.length,
           physics: const BouncingScrollPhysics(),
           itemBuilder: (context, index) {
             final tx = transactions[index];
 
             return Slidable(
-              key: ValueKey(
-                tx.id,
-              ), // Placeholder, replace with actual ID if available
+              key: ValueKey(tx.id),
 
               endActionPane: ActionPane(
                 motion: const DrawerMotion(),
@@ -45,8 +49,6 @@ class TransactionList extends StatelessWidget {
                   SlidableAction(
                     onPressed: (_) {
                       onDelete(tx, index);
-                      //onDelete(tx["id"]);
-                      // Placeholder, replace with actual ID if available
 
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("${tx.title} deleted")),
