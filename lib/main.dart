@@ -1,3 +1,4 @@
+import 'package:etrace/Api/TokenManager.dart';
 import 'package:etrace/Pages/ExpensePage.dart';
 import 'package:etrace/Pages/HomePage.dart';
 import 'package:etrace/Pages/LoginPage.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // final Color blackShade = const Color(0xFF1C1C1C);
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await TokenManager().loadTokens(); // load tokens from storage to memory
   await dotenv.load(fileName: ".env"); //  load env
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -42,7 +44,6 @@ class MyApp extends StatelessWidget {
             page = HomePage(emerald: emerald);
         }
 
-        // need dio setup
         return PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => page,
           transitionDuration: const Duration(
@@ -70,8 +71,7 @@ class MyApp extends StatelessWidget {
 }
 /* 
 TODO:
-- logout and token managment 
-- deletion logic need to be implemented 
+- logout and token managment - partial , need a seperate for logout in apiclient , chatgpt/chatname: refractoring expense tracker 
 TESTING:
 - login - Done
 - register - Done
@@ -83,6 +83,7 @@ TESTING:
 - Expense add - pending
 - Reserve add - pending
 - income add - pending
+- deletion logic - pending
 - Category fetching for id - pending
 - reserve withdraw - pending
 - reserve deposite - pending
