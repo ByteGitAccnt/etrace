@@ -1,3 +1,4 @@
+import 'package:etrace/Api/FetchService.dart';
 import 'package:etrace/Model/Category.dart';
 import 'package:etrace/Notifiers/CategoryState.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -10,10 +11,10 @@ class CategoryNotifier extends StateNotifier<CategoryState> {
 
     try {
       // call API
-      final data = [
-        Category(id: 1, name: "Food"),
-        Category(id: 2, name: "Travel"),
-      ];
+      List<Category> data = [];
+      await Future.delayed(const Duration(seconds: 1));
+      //data = await FetchService().fetchCategories();
+      data = [Category(id: 1, name: "Food"), Category(id: 2, name: "Travel")];
 
       state = state.copyWith(items: data, isLoading: false);
     } catch (e) {

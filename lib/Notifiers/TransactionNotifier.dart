@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:etrace/Api/DeleteService.dart';
 import 'package:etrace/Api/FetchService.dart';
 import 'package:etrace/Model/Expense.dart';
 import 'package:etrace/Model/Reserved.dart';
@@ -167,6 +168,7 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
 
     // optional timer (UI can also control this)
     _undoTimer = Timer(const Duration(seconds: 3), () {
+      _commitDelete(item, state);
       state = state.copyWith(clearUndo: true);
     });
   }
@@ -178,7 +180,7 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
 
     if (item == null || index == null) return;
 
-    _undoTimer?.cancel();
+    _undoTimer?.cancel(); // prevent from backend commit if user undos in time
 
     final updatedList = [...state.items];
     updatedList.insert(index, item);
@@ -191,6 +193,25 @@ final transactionProvider =
     StateNotifierProvider<TransactionNotifier, TransactionState>(
       (ref) => TransactionNotifier(),
     );
+
+Future<void> _commitDelete(Transaction item, dynamic state) async {
+  try {
+    if (item.isExpense) {
+      await DeleteService().deleteExpense(item.id);
+    } else {
+      // reserve case
+      await DeleteService().deleteReserve(item.id);
+    }
+  } catch (e) {
+    //rollback if backend fails
+    final updatedList = [...state.items];
+    updatedList.insert(state.lastDeletedIndex!, item);
+
+    state = state.copyWith(items: updatedList);
+  }
+  // clear undo state finally
+  state = state.copyWith(clearUndo: true);
+}
 
 Future<List<Transaction>> _fetchExpenses(
   String? fromDate,
