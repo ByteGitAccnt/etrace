@@ -72,15 +72,15 @@ TESTING:
 - register - Done
 - home page - Done
 - logout and token managment - pending
-- balance fetching - pending 
-- reserve fetching  - pending
-- category fetching - pending 
+- balance fetching - Done 
+- reserve fetching  - Done
+- category fetching - Done 
 - exense serach and fetch with offset and paging and without offset and paging - pending
-- Expense add - pending
-- Reserve add - pending
-- income add - pending
+- Expense add - Done
+- Reserve add - Done
+- income add - Done
 - deletion logic - pending
 - Category fetching for id - pending
 - reserve withdraw - pending
-- reserve deposite - pending
+- reserve deposite - pending currently cheking
  */

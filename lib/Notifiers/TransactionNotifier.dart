@@ -36,7 +36,8 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
     try {
       //we decide the searching combination here
       // Replace with real API
-      /* List<Transaction> data = []; // uncomment after all api implementaion is done 
+      List<Transaction> data =
+          []; // uncomment after all api implementaion is done
       await Future.delayed(const Duration(seconds: 1));
       if (isExpense) {
         data = await _fetchExpenses(fromDate, toDate, category, state);
@@ -56,8 +57,8 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
               ),
             )
             .toList();
-      } */
-      final data = [
+      }
+      /* data = [
         Transaction(
           id: 1,
           title: "Mock",
@@ -108,7 +109,7 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
           icon: Icons.lightbulb,
           isExpense: false,
         ),
-      ];
+      ]; */
 
       state = state.copyWith(
         items: data,

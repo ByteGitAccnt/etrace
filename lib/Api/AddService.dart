@@ -53,7 +53,7 @@ class AddService {
           "category": category,
           "note": note,
           "isReserved": isReserved,
-          "label": isReserved ? label : null,
+          "label": isReserved ? label!.toLowerCase() : null,
         },
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {

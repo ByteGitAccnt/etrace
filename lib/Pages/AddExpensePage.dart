@@ -250,7 +250,7 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
                     final data = await AddService().addExpense(
                       double.parse(amountController.text),
                       DateTime.parse(dateController.text),
-                      categoryController.text,
+                      categoryController.text.toLowerCase(),
                       noteController.text,
                       isReserved,
                       labelController.text,
@@ -260,7 +260,9 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
                       log(data.toString()); // need to clear log after testing
                       ref
                           .read(categoryProvider.notifier)
-                          .addIfNotExists(categoryController.text);
+                          .addIfNotExists(
+                            categoryController.text.toLowerCase(),
+                          );
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: const Text(

@@ -99,7 +99,7 @@ class _AddReservePageState extends State<AddReserveMoneyPage> {
 
                     final data = await AddService().addDepositeReserve(
                       double.parse(amountController.text),
-                      labelController.text,
+                      labelController.text.toLowerCase(),
                     );
 
                     if (data == null) {
