@@ -1,8 +1,6 @@
 import 'package:etrace/Api/TokenManager.dart';
 import 'package:etrace/Notifiers/AuthGate.dart';
 import 'package:etrace/Pages/ExpensePage.dart';
-import 'package:etrace/Pages/HomePage.dart';
-import 'package:etrace/Pages/LoginPage.dart';
 import 'package:flutter/material.dart';
 import 'package:etrace/Pages/RegisterPage.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -25,25 +23,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: const AuthGate(),
-      //initialRoute: '/login', // 👈 start here
       onGenerateRoute: (settings) {
         const Color emerald = Color(0xFF046A38);
         late Widget page;
         switch (settings.name) {
-          /*  case '/login':
-            page = LoginPage(emerald: emerald);
-            break; */
           case '/register':
             page = Registerpage(emerald: emerald);
             break;
-          /*  case '/home':
-            page = HomePage(emerald: emerald);
-            break; */
+
           case '/searchResults':
             page = ExpensePage();
             break;
-          /*  default:
-            page = HomePage(emerald: emerald); */
+
           default:
             page = const AuthGate();
         }
@@ -52,7 +43,7 @@ class MyApp extends StatelessWidget {
           pageBuilder: (context, animation, secondaryAnimation) => page,
           transitionDuration: const Duration(
             milliseconds: 250,
-          ), // 👈 shorter = faster
+          ), // shorter = faster
           reverseTransitionDuration: const Duration(milliseconds: 350),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             const begin = Offset(1.0, 0.0); // slide from right
@@ -75,11 +66,12 @@ class MyApp extends StatelessWidget {
 }
 /* 
 TODO:
-- logout and token managment - partial , need a seperate for logout in apiclient , chatgpt/chatname: refractoring expense tracker 
+ 
 TESTING:
 - login - Done
 - register - Done
 - home page - Done
+- logout and token managment - pending
 - balance fetching - pending 
 - reserve fetching  - pending
 - category fetching - pending 

@@ -13,7 +13,7 @@ class CategoryNotifier extends StateNotifier<CategoryState> {
       // call API
       List<Category> data = [];
       await Future.delayed(const Duration(seconds: 1));
-      //data = await FetchService().fetchCategories();
+      data = await FetchService().fetchCategories();
       data = [Category(id: 1, name: "Food"), Category(id: 2, name: "Travel")];
 
       state = state.copyWith(items: data, isLoading: false);

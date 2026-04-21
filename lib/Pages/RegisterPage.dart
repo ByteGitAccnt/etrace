@@ -1,5 +1,4 @@
 import 'package:etrace/Api/AuthService.dart';
-import 'package:etrace/Model/User.dart';
 import 'package:etrace/Utils/ModerButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

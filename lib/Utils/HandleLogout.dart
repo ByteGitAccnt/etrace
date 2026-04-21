@@ -1,5 +1,5 @@
 import 'package:etrace/Api/TokenManager.dart';
-import 'package:etrace/Notifiers/AuthGate.dart';
+import 'package:etrace/Notifiers/AuthNotifier.dart';
 import 'package:etrace/Notifiers/BalanceNotifier.dart';
 import 'package:etrace/Notifiers/CategoryNotifier.dart';
 import 'package:etrace/Notifiers/TransactionNotifier.dart';
@@ -30,11 +30,9 @@ Future<void> HandleLogout(BuildContext context, WidgetRef ref) async {
   await TokenManager().clearTokens();
 
   //  CRITICAL: update auth state
-  ref.read(authProvider.notifier).state = false;
+  await ref.read(authProvider.notifier).logout();
 
   ref.invalidate(transactionProvider);
   ref.invalidate(categoryProvider);
   ref.invalidate(balanceProvider);
-
-  //Navigator.pushNamedAndRemoveUntil(context, '/login', (_) => false);
 }
