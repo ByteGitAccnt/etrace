@@ -1,6 +1,11 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class TokenManager {
+  // for making it singleton and accessible globally without context
+  static final TokenManager _instance = TokenManager._internal();
+  factory TokenManager() => _instance;
+  TokenManager._internal();
+
   String? _accessToken;
   String? _refreshToken;
 

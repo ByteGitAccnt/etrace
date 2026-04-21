@@ -3,9 +3,6 @@ import 'package:etrace/Api/TokenManager.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiClient {
-  /*   👉 “Logout + Auto-redirect when refresh fails”
-👉 “Protect routes based on login state”
-👉 “State management for auth (Provider / Riverpod)” */
   static final ApiClient _instance = ApiClient._internal();
   factory ApiClient() => _instance;
 
@@ -48,8 +45,9 @@ class ApiClient {
             if (refreshToken != null) {
               try {
                 //Call refresh endpoint
-                final refreshResponse = await dio.post(
-                  "/api/auth/refresh",
+                final refreshDio = Dio(); // to avoid interceptor loop
+                final refreshResponse = await refreshDio.post(
+                  "$baseUrl/api/auth/refresh",
                   options: Options(headers: {"Refresh-Token": refreshToken}),
                 );
 

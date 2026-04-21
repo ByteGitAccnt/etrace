@@ -1,3 +1,4 @@
+import 'package:etrace/Utils/HandleLogout.dart';
 import 'package:etrace/Pages/AddExpensePage.dart';
 import 'package:etrace/Pages/AddIncomePage.dart';
 import 'package:etrace/Pages/AddReserveMoneyPage.dart';
@@ -8,17 +9,19 @@ import 'package:etrace/Pages/ReportPage.dart';
 import 'package:etrace/Pages/ReservePage.dart';
 import 'package:etrace/Pages/WithdrawReserveMoney.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({required this.emerald, super.key});
 
   final Color lightCard = const Color(0xFFE8F5E9);
   final Color emerald;
+
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   int _currentIndex = 0;
 
   Widget _getPage(int index) {
@@ -47,7 +50,7 @@ class _HomePageState extends State<HomePage> {
         elevation: 2,
         centerTitle: true,
 
-        // LEFT: Logout button (replaces back button)
+        // LEFT: Logout button
         leading: Padding(
           padding: const EdgeInsets.only(left: 12),
           child: Container(
@@ -58,9 +61,7 @@ class _HomePageState extends State<HomePage> {
             child: IconButton(
               icon: const Icon(Icons.logout),
               color: Colors.white,
-              onPressed: () {
-                // TODO: logout logic
-              },
+              onPressed: () => HandleLogout(context, ref),
             ),
           ),
         ),
@@ -131,20 +132,17 @@ class _HomePageState extends State<HomePage> {
           // 🔹 Navigation placeholders -neeed while apoi call
           switch (index) {
             case 0:
-              print("Home");
               break;
             case 1:
-              print("Expenses");
               break;
             case 2:
-              print("Reserve");
               break;
             case 3:
-              print("No Reports currently!");
               break;
           }
         },
       ),
+
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.white,
         child: const Icon(Icons.add, color: Color(0xFF046A38)),
