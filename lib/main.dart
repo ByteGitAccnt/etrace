@@ -1,4 +1,5 @@
 import 'package:etrace/Api/TokenManager.dart';
+import 'package:etrace/Notifiers/AuthGate.dart';
 import 'package:etrace/Pages/ExpensePage.dart';
 import 'package:etrace/Pages/HomePage.dart';
 import 'package:etrace/Pages/LoginPage.dart';
@@ -22,26 +23,29 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color emerald = Color(0xFF046A38);
     return MaterialApp(
-      initialRoute: '/login', // 👈 start here
+      home: const AuthGate(),
+      //initialRoute: '/login', // 👈 start here
       onGenerateRoute: (settings) {
+        const Color emerald = Color(0xFF046A38);
         late Widget page;
         switch (settings.name) {
-          case '/login':
+          /*  case '/login':
             page = LoginPage(emerald: emerald);
-            break;
+            break; */
           case '/register':
             page = Registerpage(emerald: emerald);
             break;
-          case '/home':
+          /*  case '/home':
             page = HomePage(emerald: emerald);
-            break;
+            break; */
           case '/searchResults':
             page = ExpensePage();
             break;
+          /*  default:
+            page = HomePage(emerald: emerald); */
           default:
-            page = HomePage(emerald: emerald);
+            page = const AuthGate();
         }
 
         return PageRouteBuilder(

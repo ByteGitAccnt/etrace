@@ -8,6 +8,7 @@ class ApiClient {
 
   late final Dio dio;
   final TokenManager tokenManager = TokenManager();
+  void Function()? onUnauthorized;
   final baseUrl = dotenv.env['BASE_URL'];
 
   ApiClient._internal() {
@@ -66,14 +67,17 @@ class ApiClient {
                 } else {
                   await tokenManager.clearTokens();
                   // Optionally: trigger logout flow
+                  onUnauthorized?.call();
                 }
               } catch (_) {
                 await tokenManager.clearTokens();
                 // Optionally: trigger logout flow
+                onUnauthorized?.call();
               }
             } else {
               await tokenManager.clearTokens();
               // Optionally: trigger logout flow
+              onUnauthorized?.call();
             }
           }
           return handler.next(e);
