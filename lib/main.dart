@@ -75,13 +75,13 @@ TESTING:
 - balance fetching - Done 
 - reserve fetching  - Done
 - category fetching - Done 
-- exense serach and fetch with offset and paging and without offset and paging - pending
+- exense serach and fetch with offset and paging and without offset and paging - Done
 - Expense add - Done
 - Reserve add - Done
 - income add - Done
-- deletion logic for expense - pending
+- deletion logic for expense - Done
 - deletion logic for reserve - Done
-- Category fetching for id - pending
+- Category fetching for id - Done
 - reserve withdraw - Done
 - reserve deposite - Done
 
