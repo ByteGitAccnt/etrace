@@ -9,6 +9,7 @@ import 'package:etrace/Notifiers/TransactionState.dart';
 import 'package:etrace/Utils/mapCategoryToIcon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:intl/intl.dart';
 
 class TransactionNotifier extends StateNotifier<TransactionState> {
   TransactionNotifier() : super(const TransactionState());
@@ -38,7 +39,6 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
       // Replace with real API
       List<Transaction> data =
           []; // uncomment after all api implementaion is done
-      await Future.delayed(const Duration(seconds: 1));
       if (isExpense) {
         data = await _fetchExpenses(fromDate, toDate, category, state);
       } else {
@@ -58,63 +58,11 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
             )
             .toList();
       }
-      /* data = [
-        Transaction(
-          id: 1,
-          title: "Mock",
-          amount: 200000,
-          date: "Apr 5",
-          icon: Icons.shopping_cart,
-        ),
-        Transaction(
-          id: 2,
-          title: "Travel",
-          amount: 1200,
-          date: "Apr 5",
-          icon: Icons.flight,
-        ),
-        Transaction(
-          id: 3,
-          title: "Shopping",
-          amount: 800,
-          date: "Apr 6",
-          icon: Icons.shopping_cart,
-        ),
-        Transaction(
-          id: 4,
-          title: "Salary",
-          amount: 20000,
-          date: "Apr 1",
-          icon: Icons.work,
-        ),
-        Transaction(
-          id: 5,
-          title: "Electricity Bill",
-          amount: 1500,
-          date: "Apr 7",
-          icon: Icons.lightbulb,
-        ),
-        Transaction(
-          id: 6,
-          title: "Bill",
-          amount: 1500,
-          date: "Apr 7",
-          icon: Icons.lightbulb,
-        ),
-        Transaction(
-          id: 7,
-          title: "mok3",
-          amount: 1500,
-          date: "Apr 7",
-          icon: Icons.lightbulb,
-          isExpense: false,
-        ),
-      ]; */
 
       state = state.copyWith(
         items: data,
         isLoading: false,
-        page: 1,
+        page: 0,
         hasMore: true,
       );
     } catch (e) {
@@ -232,8 +180,9 @@ Future<List<Transaction>> _fetchExpenses(
             id: e.id,
             title: e.categoryName,
             amount: e.amount,
-            date: e.expenseDate.toString(),
+            date: DateFormat('yyyy-MM-dd').format(e.expenseDate),
             icon: mapCategoryToIcon(e.categoryName),
+            isExpense: true,
           ),
         )
         .toList();
@@ -251,8 +200,9 @@ Future<List<Transaction>> _fetchExpenses(
             id: e.id,
             title: e.categoryName,
             amount: e.amount,
-            date: e.expenseDate.toString(),
+            date: DateFormat('yyyy-MM-dd').format(e.expenseDate),
             icon: mapCategoryToIcon(e.categoryName),
+            isExpense: true,
           ),
         )
         .toList();
@@ -272,8 +222,9 @@ Future<List<Transaction>> _fetchExpenses(
             id: e.id,
             title: e.categoryName,
             amount: e.amount,
-            date: e.expenseDate.toString(),
+            date: DateFormat('yyyy-MM-dd').format(e.expenseDate),
             icon: mapCategoryToIcon(e.categoryName),
+            isExpense: true,
           ),
         )
         .toList();
@@ -289,8 +240,9 @@ Future<List<Transaction>> _fetchExpenses(
             id: e.id,
             title: e.categoryName,
             amount: e.amount,
-            date: e.expenseDate.toString(),
+            date: DateFormat('yyyy-MM-dd').format(e.expenseDate),
             icon: mapCategoryToIcon(e.categoryName),
+            isExpense: true,
           ),
         )
         .toList();

@@ -21,7 +21,10 @@ class FetchService {
         if (response.statusCode! >= 200 && response.statusCode! < 300) {
           final dynamic jsonList = response.data is List
               ? response.data
-              : response.data['data'] ?? response.data['expenses'] ?? [];
+              : response.data['content'] ??
+                    response.data['data'] ??
+                    response.data['expenses'] ??
+                    [];
 
           return Expense.listFromJson(jsonList);
         } else {
@@ -48,7 +51,10 @@ class FetchService {
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         final dynamic jsonList = response.data is List
             ? response.data
-            : response.data['data'] ?? response.data['expenses'] ?? [];
+            : response.data['content'] ??
+                  response.data['data'] ??
+                  response.data['expenses'] ??
+                  [];
 
         return Reserved.listFromJson(jsonList);
       } else {
@@ -86,7 +92,10 @@ class FetchService {
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         final dynamic jsonList = response.data is List
             ? response.data
-            : response.data['data'] ?? response.data['expenses'] ?? [];
+            : response.data['content'] ??
+                  response.data['data'] ??
+                  response.data['expenses'] ??
+                  [];
 
         return Expense.listFromJson(jsonList);
       } else {
@@ -104,7 +113,7 @@ class FetchService {
     DateTime fromDate,
     DateTime toDate, {
     int page = 0,
-    int size = 0,
+    int size = 10,
   }) async {
     try {
       final response = await dio.get(
@@ -120,7 +129,10 @@ class FetchService {
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         final dynamic jsonList = response.data is List
             ? response.data
-            : response.data['data'] ?? response.data['expenses'] ?? [];
+            : response.data['content'] ??
+                  response.data['data'] ??
+                  response.data['expenses'] ??
+                  [];
 
         return Expense.listFromJson(jsonList);
       } else {

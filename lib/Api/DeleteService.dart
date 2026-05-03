@@ -21,7 +21,7 @@ class DeleteService {
 
   Future<void> deleteReserve(int id) async {
     try {
-      final response = await dio.delete("/api/reserve$id");
+      final response = await dio.delete("/api/reserve/$id");
 
       if (response.statusCode! < 200 || response.statusCode! >= 300) {
         throw Exception(
