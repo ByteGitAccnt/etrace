@@ -79,8 +79,16 @@ TESTING:
 - Expense add - Done
 - Reserve add - Done
 - income add - Done
-- deletion logic - pending
+- deletion logic for expense - pending
+- deletion logic for reserve - Done
 - Category fetching for id - pending
-- reserve withdraw - pending
-- reserve deposite - pending currently cheking
+- reserve withdraw - Done
+- reserve deposite - Done
+
+
+
+
+
+
+
  */
