@@ -71,7 +71,7 @@ TESTING:
 - login - Done
 - register - Done
 - home page - Done
-- logout and token managment - pending
+- logout and token managment - Done
 - balance fetching - Done 
 - reserve fetching  - Done
 - category fetching - Done 
