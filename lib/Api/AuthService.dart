@@ -65,4 +65,15 @@ class AuthService {
       return null;
     }
   }
+
+  Future<void> logout() async {
+    try {
+      final response = await dio.post("/api/auth/logout");
+      if (!(response.statusCode! >= 200 && response.statusCode! < 300)) {
+        log("Logout Failed: ${response.statusCode} - ${response.data}");
+      }
+    } on DioException catch (e) {
+      log("Network Error: $e");
+    }
+  }
 }
