@@ -27,9 +27,7 @@ Future<void> HandleLogout(BuildContext context, WidgetRef ref) async {
 
   if (confirm != true) return;
 
-  await TokenManager().clearTokens();
-
-  //  CRITICAL: update auth state
+  //  CRITICAL: update auth state (sends backend logout)
   await ref.read(authProvider.notifier).logout();
 
   ref.invalidate(transactionProvider);
