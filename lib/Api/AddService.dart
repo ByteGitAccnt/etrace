@@ -11,7 +11,6 @@ class AddService {
 
   Future<User?> addIncome(double amount) async {
     if (amount <= 0) {
-      log("Invalid income amount");
       return null;
     }
     try {

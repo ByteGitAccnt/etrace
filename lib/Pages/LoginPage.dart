@@ -93,12 +93,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       // bool success = true;
 
                       if (success) {
-                        //Save mock token (important for consistency)
-                        /* await TokenManager().saveTokens(
-                          "mockAccess",
-                          "mockRefresh",
-                        ); */
-
                         //  Update global auth state
                         ref.read(authProvider.notifier).loginSuccess();
                       } else {

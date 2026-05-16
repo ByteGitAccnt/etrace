@@ -81,7 +81,6 @@ class _AddIncomePageState extends State<AddIncomePage> {
                       double.parse(amountController.text),
                     );
                     if (data == null) {
-                      log("Failed to add income");
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: const Text(
@@ -94,8 +93,6 @@ class _AddIncomePageState extends State<AddIncomePage> {
                       );
                       return;
                     }
-                    log("Income addedd successfully");
-                    log(data.toString());
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: const Text(

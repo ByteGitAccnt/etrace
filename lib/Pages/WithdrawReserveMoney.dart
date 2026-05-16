@@ -115,7 +115,6 @@ class _WithdrawreservemoneyState extends State<Withdrawreservemoney> {
                       );
                       return;
                     }
-                    log(data.toString());
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: const Text(
