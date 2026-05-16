@@ -114,7 +114,6 @@ class _AddReservePageState extends State<AddReservePage> {
                       noteController.text,
                     );
                     if (data == null) {
-                      log("Failed to add reserved fund");
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: const Text(
@@ -127,7 +126,6 @@ class _AddReservePageState extends State<AddReservePage> {
                       );
                       return;
                     }
-                    log(data.toString());
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: const Text(

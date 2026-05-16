@@ -9,7 +9,6 @@ class UpdateService {
 
   Future<Reserved?> withdrawReserve(double amount, String label) async {
     if (amount <= 0) {
-      log("Invalid amount");
       return Future(() => null);
     }
     try {

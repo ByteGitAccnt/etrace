@@ -115,7 +115,6 @@ class _AddReservePageState extends State<AddReserveMoneyPage> {
                       );
                       return;
                     }
-                    log(data.toString());
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: const Text(

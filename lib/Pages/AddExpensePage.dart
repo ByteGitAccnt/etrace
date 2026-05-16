@@ -256,8 +256,6 @@ class _AddExpensePageState extends ConsumerState<AddExpensePage> {
                       labelController.text,
                     );
                     if (data != null) {
-                      print(data.categoryName);
-                      log(data.toString()); // need to clear log after testing
                       ref
                           .read(categoryProvider.notifier)
                           .addIfNotExists(
