@@ -42,9 +42,9 @@ class MyApp extends StatelessWidget {
         return PageRouteBuilder(
           pageBuilder: (context, animation, secondaryAnimation) => page,
           transitionDuration: const Duration(
-            milliseconds: 250,
+            milliseconds: 350,
           ), // shorter = faster
-          reverseTransitionDuration: const Duration(milliseconds: 350),
+          reverseTransitionDuration: const Duration(milliseconds: 450),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             const begin = Offset(1.0, 0.0); // slide from right
             const end = Offset.zero;
@@ -67,10 +67,11 @@ class MyApp extends StatelessWidget {
 /* 
 
 TODO:
-- Expense caching and state managment - pending
-- Reserve caching and state managment - pending 
+
 TESTING:
 - Category caching and state managment - Done 
+- Expense caching and state managment - Done
+- Reserve caching and state managment - Done
 - login - Done
 - register - Done
 - home page - Done
