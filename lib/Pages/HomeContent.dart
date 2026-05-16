@@ -1,4 +1,5 @@
 import 'package:etrace/Notifiers/balance/BalanceNotifier.dart';
+import 'package:etrace/Notifiers/category/CategoryNotifier.dart';
 import 'package:etrace/Notifiers/transaction/TransactionNotifier.dart';
 import 'package:etrace/Utils/TransactionList.dart';
 import 'package:flutter/material.dart';
@@ -12,59 +13,146 @@ class HomeContent extends ConsumerStatefulWidget {
 }
 
 class _HomeContentState extends ConsumerState<HomeContent> {
+  // =====================================================
+  // INITIAL SESSION PRELOAD
+  // =====================================================
   @override
   void initState() {
     super.initState();
 
-    Future.microtask(() {
-      ref.read(balanceProvider.notifier).fetchBalance();
-
-      // ✅ ensure transactions are loaded
-      ref.read(transactionProvider.notifier).load();
+    Future.microtask(() async {
+      await Future.wait({
+        ref.read(balanceProvider.notifier).fetchBalance(),
+        ref.read(categoryProvider.notifier).load(),
+        ref.read(transactionProvider.notifier).loadExpenses(),
+        ref.read(transactionProvider.notifier).loadReserves(),
+      });
     });
+  }
+
+  // =====================================================
+  // GLOBAL HOME REFRESH
+  // Pull-to-refresh = full sync
+  // =====================================================
+  Future<void> _refreshHome() async {
+    await Future.wait([
+      ref.read(balanceProvider.notifier).fetchBalance(),
+      ref.read(categoryProvider.notifier).load(forceRefresh: true),
+      ref.read(transactionProvider.notifier).loadExpenses(forceRefresh: true),
+      ref.read(transactionProvider.notifier).loadReserves(forceRefresh: true),
+    ]);
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(transactionProvider);
 
-    // ✅ get from state.items
-    final recentTransactions = state.items.take(7).toList();
+    // =====================================================
+    // CACHED RECENT EXPENSES
+    // =====================================================
+    final recentTransactions = state.expenseItems.take(7).toList();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 24),
-        _buildBalanceCard(),
-        const SizedBox(height: 20),
+    return RefreshIndicator(
+      onRefresh: _refreshHome,
 
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            "Recent Expenses",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: Colors.white,
-            ),
-          ),
-        ),
+      // ===================================================
+      // IMPORTANT:
+      // AlwaysScrollableScrollPhysics ensures pull works
+      // even if content is small
+      // ===================================================
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
 
-        Expanded(
-          child: recentTransactions.isEmpty
-              ? const Center(
-                  child: Text(
-                    "No transactions yet",
-                    style: TextStyle(color: Colors.white70),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 24),
+
+              // =============================================
+              // BALANCE CARD
+              // =============================================
+              _buildBalanceCard(),
+
+              const SizedBox(height: 20),
+
+              // =============================================
+              // HEADER
+              // =============================================
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  "Recent Expenses",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // =============================================
+              // FIRST LOAD
+              // =============================================
+              if (state.isLoadingExpenses && recentTransactions.isEmpty)
+                const Expanded(
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              // =============================================
+              // ERROR
+              // =============================================
+              else if (state.error != null && recentTransactions.isEmpty)
+                Expanded(
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text(
+                        state.error!,
+                        style: const TextStyle(color: Colors.white70),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
                 )
-              : TransactionList(
-                  transactions: recentTransactions,
-                  enableDelete: false,
-                  onDelete: (_, __) {},
+              // =============================================
+              // EMPTY
+              // =============================================
+              else if (recentTransactions.isEmpty)
+                const Expanded(
+                  child: Center(
+                    child: Text(
+                      "No transactions yet",
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  ),
+                )
+              // =============================================
+              // DATA
+              // =============================================
+              else
+                Expanded(
+                  child: TransactionList(
+                    transactions: recentTransactions,
+                    enableDelete: false,
+                    onDelete: (_, __) {},
+                  ),
                 ),
+
+              // =============================================
+              // Background refresh loader
+              // =============================================
+              if (state.isLoadingExpenses && recentTransactions.isNotEmpty)
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 16),
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+            ],
+          ),
         ),
-      ],
+      ),
     );
   }
 }
@@ -159,80 +247,3 @@ Widget _buildBalanceCard() {
     ),
   );
 }
-
-
-
-/* import 'package:etrace/Model/Transaction.dart';
-import 'package:etrace/Notifiers/BalanceNotifier.dart';
-import 'package:etrace/Utils/TransactionList.dart';
-import 'package:etrace/Notifiers/TransactionNotifier_old.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-class HomeContent extends ConsumerStatefulWidget {
-  const HomeContent({super.key});
-
-  @override
-  ConsumerState<HomeContent> createState() => _HomeContentState();
-}
-
-class _HomeContentState extends ConsumerState<HomeContent> {
-  @override
-  void initState() {
-    super.initState();
-
-    Future.microtask(() {
-      ref.read(balanceProvider.notifier).fetchBalance();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Get data from Riverpod
-    final allTransactions = ref.watch(transactionProvider);
-
-    // Take only recent 7
-    final recentTransactions = allTransactions.take(7).toList();
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 24),
-        _buildBalanceCard(),
-        const SizedBox(height: 20),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            "Recent Expenses",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 18,
-              color: Colors.white,
-            ),
-          ),
-        ),
-
-        Expanded(
-          child: TransactionList(
-            transactions: recentTransactions.isEmpty
-                ? [
-                    Transaction(
-                      id: 0,
-                      title: "No transactions yet",
-                      amount: 0,
-                      date: "",
-                      icon: Icons.info_outline,
-                    ),
-                  ]
-                : recentTransactions,
-
-            onDelete: (tx, index) {}, // not needed here
-            enableDelete: false, // ✅ disable delete
-          ),
-        ),
-      ],
-    );
-  }
-}
-
- */

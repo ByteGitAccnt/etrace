@@ -75,7 +75,7 @@ class _ExpenseSearchPageState extends ConsumerState<ExpenseSearchPage> {
     //  Single unified call
     await ref
         .read(transactionProvider.notifier)
-        .load(
+        .loadExpenses(
           fromDate: hasFrom ? fromDate : null,
           toDate: hasTo ? toDate : null,
           category: selectedCategory?.id,

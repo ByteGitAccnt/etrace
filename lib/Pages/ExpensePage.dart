@@ -12,35 +12,57 @@ class ExpensePage extends ConsumerStatefulWidget {
 
 class _ExpensePageState extends ConsumerState<ExpensePage> {
   final Color emerald = const Color(0xFF046A38);
-  final ScrollController _scrollController = ScrollController();
+
+  late final ScrollController _scrollController;
 
   @override
   void initState() {
     super.initState();
 
-    // 🔹 Initial load
+    _scrollController = ScrollController();
+
+    // =====================================================
+    // INITIAL LOAD
+    // Safe because notifier now has cache guard:
+    // if already loaded -> no duplicate backend hit
+    // =====================================================
     Future.microtask(() {
-      ref.read(transactionProvider.notifier).load();
+      ref.read(transactionProvider.notifier).loadExpenses();
     });
 
-    // 🔹 Infinite scroll
-    _scrollController.addListener(() {
-      if (_scrollController.position.pixels >=
-          _scrollController.position.maxScrollExtent - 200) {
-        final notifier = ref.read(transactionProvider.notifier);
-        final state = ref.read(transactionProvider);
+    // =====================================================
+    // PAGINATION
+    // =====================================================
+    _scrollController.addListener(_onScroll);
+  }
 
-        if (!state.isLoading && state.hasMore) {
-          notifier.fetchMore();
-        }
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+
+    final position = _scrollController.position;
+
+    // Trigger before absolute bottom for smoother UX
+    if (position.pixels >= position.maxScrollExtent - 200) {
+      final notifier = ref.read(transactionProvider.notifier);
+      final state = ref.read(transactionProvider);
+
+      if (!state.isLoadingExpenses && state.expenseHasMore) {
+        notifier.fetchMoreExpenses();
       }
-    });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(transactionProvider);
-    final expenseList = state.items.where((t) => t.isExpense).toList();
+
+    // =====================================================
+    // NEW STATE ACCESS
+    // No filtering needed because provider already separates
+    // expenses from reserves
+    // =====================================================
+    final expenseList = state.expenseItems;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: emerald,
@@ -50,6 +72,9 @@ class _ExpensePageState extends ConsumerState<ExpensePage> {
       body: SafeArea(
         child: Column(
           children: [
+            // =================================================
+            // MAIN LIST
+            // =================================================
             Expanded(
               child: TransactionList(
                 transactions: expenseList,
@@ -63,13 +88,11 @@ class _ExpensePageState extends ConsumerState<ExpensePage> {
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: const Text("Item deleted"),
+                      content: const Text("Item will be removed"),
                       duration: const Duration(seconds: 3),
                       action: SnackBarAction(
                         label: "UNDO",
-                        onPressed: () {
-                          notifier.undo();
-                        },
+                        onPressed: notifier.undo,
                       ),
                     ),
                   );
@@ -77,10 +100,32 @@ class _ExpensePageState extends ConsumerState<ExpensePage> {
               ),
             ),
 
-            if (state.isLoading)
+            // =================================================
+            // LOADING STATES
+            // =================================================
+
+            // First load spinner
+            if (state.isLoadingExpenses && expenseList.isEmpty)
+              const Expanded(child: Center(child: CircularProgressIndicator())),
+
+            // Pagination spinner
+            if (state.isLoadingExpenses && expenseList.isNotEmpty)
               const Padding(
                 padding: EdgeInsets.all(10),
                 child: CircularProgressIndicator(),
+              ),
+
+            // =================================================
+            // ERROR
+            // =================================================
+            if (state.error != null && expenseList.isEmpty)
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  state.error!,
+                  style: const TextStyle(color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
               ),
           ],
         ),
@@ -90,7 +135,10 @@ class _ExpensePageState extends ConsumerState<ExpensePage> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+
     super.dispose();
   }
 }

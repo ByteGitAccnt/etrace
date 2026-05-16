@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:etrace/Api/DeleteService.dart';
 import 'package:etrace/Api/FetchService.dart';
 import 'package:etrace/Model/Expense.dart';
-import 'package:etrace/Model/Reserved.dart';
 import 'package:etrace/Model/Transaction.dart';
 import 'package:etrace/Notifiers/transaction/TransactionState.dart';
 import 'package:etrace/Utils/mapCategoryToIcon.dart';
@@ -12,240 +11,281 @@ import 'package:flutter_riverpod/legacy.dart';
 import 'package:intl/intl.dart';
 
 class TransactionNotifier extends StateNotifier<TransactionState> {
-  TransactionNotifier() : super(const TransactionState());
+  TransactionNotifier() : super(TransactionState.initial());
 
   Timer? _undoTimer;
 
-  //  LOAD (initial + search/filter)
-  Future<void> load({
+  // =======================================================
+  // LOAD EXPENSES (cached + filters + refresh)
+  // =======================================================
+  Future<void> loadExpenses({
     String? fromDate,
     String? toDate,
     int? category,
-    bool isExpense = true,
+    bool forceRefresh = false,
   }) async {
+    final filtersChanged =
+        state.expenseFromDate != fromDate ||
+        state.expenseToDate != toDate ||
+        state.expenseCategory != category;
+
+    if (state.expensesLoaded && !forceRefresh && !filtersChanged) return;
+
     state = state.copyWith(
-      isLoading: true,
-      page: 0,
-      items: [],
-      hasMore: true,
-      fromDate: fromDate,
-      toDate: toDate,
-      category: category,
+      isLoadingExpenses: true,
+      expensePage: 0,
+      expenseItems: [],
+      expenseHasMore: true,
+
+      expenseFromDate: fromDate,
+      expenseToDate: toDate,
+      expenseCategory: category,
+
       error: null,
     );
 
     try {
-      //we decide the searching combination here
-      // Replace with real API
-      List<Transaction> data =
-          []; // uncomment after all api implementaion is done
-      if (isExpense) {
-        data = await _fetchExpenses(fromDate, toDate, category, state);
-      } else {
-        // Implement reserve fetching logic here
-        List<Reserved> reserves = await FetchService().fetchReserves();
-        data = reserves
-            .map(
-              (r) => Transaction(
-                id: r.id,
-                title: r.label,
-                amount: r.amount,
-                date: "N/A", // Replace with actual date if available
-                icon: Icons
-                    .account_balance_wallet, // Use a generic icon for reserves
-                isExpense: false,
-              ),
-            )
-            .toList();
-      }
+      final data = await _fetchExpenses(fromDate, toDate, category, page: 0);
 
       state = state.copyWith(
-        items: data,
-        isLoading: false,
-        page: 0,
-        hasMore: true,
+        expenseItems: data,
+        isLoadingExpenses: false,
+        expensesLoaded: true,
+        expensePage: 0,
+        expenseHasMore: data.length == 10,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(isLoadingExpenses: false, error: e.toString());
     }
   }
 
-  // PAGINATION
-  Future<void> fetchMore() async {
-    if (state.isLoading || !state.hasMore) return;
+  // =======================================================
+  // LOAD RESERVES
+  // =======================================================
+  Future<void> loadReserves({bool forceRefresh = false}) async {
+    if (state.reservesLoaded && !forceRefresh) return;
 
-    state = state.copyWith(isLoading: true);
+    state = state.copyWith(isLoadingReserves: true, error: null);
 
     try {
-      //  real API using:
-      // state.page, state.fromDate, state.toDate, state.category
+      final reserves = await FetchService().fetchReserves();
 
-      final moreData = await _fetchExpenses(
-        state.fromDate,
-        state.toDate,
-        state.category,
-        state,
-      );
+      final data = reserves
+          .map(
+            (r) => Transaction(
+              id: r.id,
+              title: r.label,
+              amount: r.amount,
+              date: "N/A",
+              icon: Icons.account_balance_wallet,
+              isExpense: false,
+            ),
+          )
+          .toList();
 
       state = state.copyWith(
-        items: [...state.items, ...moreData],
-        isLoading: false,
-        page: state.page + 1,
-        hasMore: moreData.isNotEmpty,
+        reserveItems: data,
+        isLoadingReserves: false,
+        reservesLoaded: true,
       );
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      state = state.copyWith(isLoadingReserves: false, error: e.toString());
     }
   }
 
-  // DELETE (by ID, NOT index)
-  void deleteById(int id) {
-    final index = state.items.indexWhere((t) => t.id == id);
-    if (index == -1) return;
+  // =======================================================
+  // PAGINATION (EXPENSES ONLY)
+  // =======================================================
+  Future<void> fetchMoreExpenses() async {
+    if (state.isLoadingExpenses || !state.expenseHasMore) return;
 
-    final item = state.items[index];
+    state = state.copyWith(isLoadingExpenses: true);
+
+    try {
+      final nextPage = state.expensePage + 1;
+
+      final moreData = await _fetchExpenses(
+        state.expenseFromDate,
+        state.expenseToDate,
+        state.expenseCategory,
+        page: nextPage,
+      );
+
+      state = state.copyWith(
+        expenseItems: [...state.expenseItems, ...moreData],
+        isLoadingExpenses: false,
+        expensePage: nextPage,
+        expenseHasMore: moreData.isNotEmpty,
+      );
+    } catch (e) {
+      state = state.copyWith(isLoadingExpenses: false, error: e.toString());
+    }
+  }
+
+  // =======================================================
+  // LOCAL ADD
+  // =======================================================
+  void addExpense(Transaction newExpense) {
+    state = state.copyWith(expenseItems: [newExpense, ...state.expenseItems]);
+  }
+
+  void addReserve(Transaction newReserve) {
+    state = state.copyWith(reserveItems: [newReserve, ...state.reserveItems]);
+  }
+
+  // =======================================================
+  // DELETE + UNDO
+  // =======================================================
+  void deleteById(int id) {
+    Transaction? item;
+    int index = -1;
+
+    final expenseIndex = state.expenseItems.indexWhere((t) => t.id == id);
+
+    if (expenseIndex != -1) {
+      item = state.expenseItems[expenseIndex];
+      index = expenseIndex;
+
+      final updated = [...state.expenseItems]..removeAt(expenseIndex);
+
+      state = state.copyWith(
+        expenseItems: updated,
+        lastDeleted: item,
+        lastDeletedIndex: index,
+      );
+    } else {
+      final reserveIndex = state.reserveItems.indexWhere((t) => t.id == id);
+
+      if (reserveIndex == -1) return;
+
+      item = state.reserveItems[reserveIndex];
+      index = reserveIndex;
+
+      final updated = [...state.reserveItems]..removeAt(reserveIndex);
+
+      state = state.copyWith(
+        reserveItems: updated,
+        lastDeleted: item,
+        lastDeletedIndex: index,
+      );
+    }
 
     _undoTimer?.cancel();
 
-    final updatedList = [...state.items]..removeAt(index);
-
-    state = state.copyWith(
-      items: updatedList,
-      lastDeleted: item,
-      lastDeletedIndex: index,
-    );
-
-    // optional timer (UI can also control this)
     _undoTimer = Timer(const Duration(seconds: 3), () {
-      _commitDelete(item, state);
-      state = state.copyWith(clearUndo: true);
+      _commitDelete(item!);
     });
   }
 
-  // UNDO
   void undo() {
     final item = state.lastDeleted;
     final index = state.lastDeletedIndex;
 
     if (item == null || index == null) return;
 
-    _undoTimer?.cancel(); // prevent from backend commit if user undos in time
+    _undoTimer?.cancel();
 
-    final updatedList = [...state.items];
-    updatedList.insert(index, item);
-
-    state = state.copyWith(items: updatedList, clearUndo: true);
-  }
-}
-
-final transactionProvider =
-    StateNotifierProvider<TransactionNotifier, TransactionState>(
-      (ref) => TransactionNotifier(),
-    );
-
-Future<void> _commitDelete(Transaction item, dynamic state) async {
-  try {
     if (item.isExpense) {
-      await DeleteService().deleteExpense(item.id);
-    } else {
-      // reserve case
-      await DeleteService().deleteReserve(item.id);
-    }
-  } catch (e) {
-    //rollback if backend fails
-    final updatedList = [...state.items];
-    updatedList.insert(state.lastDeletedIndex!, item);
+      final updated = [...state.expenseItems];
+      updated.insert(index, item);
 
-    state = state.copyWith(items: updatedList);
+      state = state.copyWith(expenseItems: updated, clearUndo: true);
+    } else {
+      final updated = [...state.reserveItems];
+      updated.insert(index, item);
+
+      state = state.copyWith(reserveItems: updated, clearUndo: true);
+    }
   }
-  // clear undo state finally
-  state = state.copyWith(clearUndo: true);
+
+  Future<void> _commitDelete(Transaction item) async {
+    try {
+      if (item.isExpense) {
+        await DeleteService().deleteExpense(item.id);
+      } else {
+        await DeleteService().deleteReserve(item.id);
+      }
+    } catch (e) {
+      undo(); // rollback
+    }
+
+    state = state.copyWith(clearUndo: true);
+  }
+
+  // =======================================================
+  // LOGOUT RESET
+  // =======================================================
+  void clear() {
+    _undoTimer?.cancel();
+    state = TransactionState.initial();
+  }
 }
 
 Future<List<Transaction>> _fetchExpenses(
   String? fromDate,
   String? toDate,
-  int? category,
-  dynamic state,
-) async {
-  List<Transaction> data = [];
+  int? category, {
+  required int page,
+}) async {
+  List<Expense> expenses = [];
+
+  // =====================================================
+  // CASE 1: No filters
+  // =====================================================
   if (fromDate == null && toDate == null && category == null) {
-    List<Expense> expenses = await FetchService().fetchExpenses(
-      page: state.page,
-      size: 10,
-    );
-    data = expenses
-        .map(
-          (e) => Transaction(
-            id: e.id,
-            title: e.categoryName,
-            amount: e.amount,
-            date: DateFormat('yyyy-MM-dd').format(e.expenseDate),
-            icon: mapCategoryToIcon(e.categoryName),
-            isExpense: true,
-          ),
-        )
-        .toList();
-  } else if (fromDate != null && toDate != null && category == null) {
-    // Implement date range filtering logic here
-    List<Expense> expenses = await FetchService().fetchExpensesByDateRange(
+    expenses = await FetchService().fetchExpenses(page: page, size: 10);
+  }
+  // =====================================================
+  // CASE 2: Date range only
+  // =====================================================
+  else if (fromDate != null && toDate != null && category == null) {
+    expenses = await FetchService().fetchExpensesByDateRange(
       DateTime.parse(fromDate),
       DateTime.parse(toDate),
-      page: state.page,
+      page: page,
       size: 10,
     );
-    data = expenses
-        .map(
-          (e) => Transaction(
-            id: e.id,
-            title: e.categoryName,
-            amount: e.amount,
-            date: DateFormat('yyyy-MM-dd').format(e.expenseDate),
-            icon: mapCategoryToIcon(e.categoryName),
-            isExpense: true,
-          ),
-        )
-        .toList();
-  } else if (category != null && fromDate != null && toDate != null) {
-    // Implement category filtering logic here
-    List<Expense> expenses = await FetchService()
-        .fetchExpensesByCategoryAndDateRange(
-          DateTime.parse(fromDate),
-          DateTime.parse(toDate),
-          category,
-          page: state.page,
-          size: 10,
-        );
-    data = expenses
-        .map(
-          (e) => Transaction(
-            id: e.id,
-            title: e.categoryName,
-            amount: e.amount,
-            date: DateFormat('yyyy-MM-dd').format(e.expenseDate),
-            icon: mapCategoryToIcon(e.categoryName),
-            isExpense: true,
-          ),
-        )
-        .toList();
-  } else {
-    // Handle other combinations or default case
-    List<Expense> expenses = await FetchService().fetchExpenses(
-      page: state.page,
-      size: 10,
-    );
-    data = expenses
-        .map(
-          (e) => Transaction(
-            id: e.id,
-            title: e.categoryName,
-            amount: e.amount,
-            date: DateFormat('yyyy-MM-dd').format(e.expenseDate),
-            icon: mapCategoryToIcon(e.categoryName),
-            isExpense: true,
-          ),
-        )
-        .toList();
   }
-  return data;
+  // =====================================================
+  // CASE 3: Category + Date range
+  // =====================================================
+  else if (category != null && fromDate != null && toDate != null) {
+    expenses = await FetchService().fetchExpensesByCategoryAndDateRange(
+      DateTime.parse(fromDate),
+      DateTime.parse(toDate),
+      category,
+      page: page,
+      size: 10,
+    );
+  }
+  // =====================================================
+  // CASE 4: Fallback
+  // (future-proof for unsupported combinations)
+  // =====================================================
+  else {
+    expenses = await FetchService().fetchExpenses(page: page, size: 10);
+  }
+
+  // =====================================================
+  // FINAL MAP
+  // =====================================================
+  return expenses.map(_mapExpenseToTransaction).toList();
+}
+// =======================================================
+// provider
+// =======================================================
+
+final transactionProvider =
+    StateNotifierProvider<TransactionNotifier, TransactionState>(
+      (ref) => TransactionNotifier(),
+    );
+Transaction _mapExpenseToTransaction(Expense e) {
+  return Transaction(
+    id: e.id,
+    title: e.categoryName,
+    amount: e.amount,
+    date: DateFormat('yyyy-MM-dd').format(e.expenseDate),
+    icon: mapCategoryToIcon(e.categoryName),
+    isExpense: true,
+  );
 }

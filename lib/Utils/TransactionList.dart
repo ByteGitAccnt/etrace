@@ -49,10 +49,6 @@ class TransactionList extends StatelessWidget {
                   SlidableAction(
                     onPressed: (_) {
                       onDelete(tx, index);
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("${tx.title} deleted")),
-                      );
                     },
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
