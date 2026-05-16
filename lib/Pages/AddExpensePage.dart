@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:etrace/Api/AddService.dart';
 import 'package:etrace/Model/Category.dart';
-import 'package:etrace/Notifiers/CategoryNotifier.dart';
+import 'package:etrace/Notifiers/category/CategoryNotifier.dart';
 import 'package:etrace/Utils/CustomeInputDecorator.dart';
 import 'package:etrace/Utils/ModerButton.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

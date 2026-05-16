@@ -1,5 +1,5 @@
 import 'package:etrace/Api/TokenManager.dart';
-import 'package:etrace/Notifiers/AuthGate.dart';
+import 'package:etrace/Notifiers/auth/AuthGate.dart';
 import 'package:etrace/Pages/ExpensePage.dart';
 import 'package:flutter/material.dart';
 import 'package:etrace/Pages/RegisterPage.dart';
@@ -65,9 +65,12 @@ class MyApp extends StatelessWidget {
   }
 }
 /* 
+
 TODO:
- 
+- Expense caching and state managment - pending
+- Reserve caching and state managment - pending 
 TESTING:
+- Category caching and state managment - Done 
 - login - Done
 - register - Done
 - home page - Done
@@ -84,11 +87,5 @@ TESTING:
 - Category fetching for id - Done
 - reserve withdraw - Done
 - reserve deposite - Done
-
-
-
-
-
-
 
  */

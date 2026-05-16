@@ -1,7 +1,7 @@
 import 'package:etrace/Api/ApiClient.dart';
 import 'package:etrace/Api/AuthService.dart';
 import 'package:etrace/Api/TokenManager.dart';
-import 'package:etrace/Notifiers/AuthStatus.dart';
+import 'package:etrace/Notifiers/auth/AuthStatus.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 class AuthNotifier extends StateNotifier<AuthStatus> {

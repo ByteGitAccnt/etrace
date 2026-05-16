@@ -1,4 +1,4 @@
-import 'package:etrace/Notifiers/TransactionNotifier.dart';
+import 'package:etrace/Notifiers/transaction/TransactionNotifier.dart';
 import 'package:etrace/Utils/TransactionList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -5,7 +5,7 @@ import 'package:etrace/Api/FetchService.dart';
 import 'package:etrace/Model/Expense.dart';
 import 'package:etrace/Model/Reserved.dart';
 import 'package:etrace/Model/Transaction.dart';
-import 'package:etrace/Notifiers/TransactionState.dart';
+import 'package:etrace/Notifiers/transaction/TransactionState.dart';
 import 'package:etrace/Utils/mapCategoryToIcon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/legacy.dart';

@@ -1,5 +1,5 @@
 import 'package:etrace/Api/AuthService.dart';
-import 'package:etrace/Notifiers/AuthNotifier.dart';
+import 'package:etrace/Notifiers/auth/AuthNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:etrace/Utils/ModerButton.dart';
