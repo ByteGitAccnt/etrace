@@ -1,5 +1,5 @@
-import 'package:etrace/Notifiers/AuthNotifier.dart';
-import 'package:etrace/Notifiers/AuthStatus.dart';
+import 'package:etrace/Notifiers/auth/AuthNotifier.dart';
+import 'package:etrace/Notifiers/auth/AuthStatus.dart';
 import 'package:etrace/Pages/HomePage.dart';
 import 'package:etrace/Pages/LoginPage.dart';
 import 'package:flutter/material.dart';

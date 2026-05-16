@@ -1,4 +1,4 @@
-import 'package:etrace/Notifiers/BalanceService.dart';
+import 'package:etrace/Notifiers/balance/BalanceService.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:etrace/model/Balance.dart';
 import 'package:flutter_riverpod/legacy.dart';
