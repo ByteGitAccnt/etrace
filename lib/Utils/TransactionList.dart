@@ -36,7 +36,10 @@ class TransactionList extends StatelessWidget {
           controller: controller,
 
           itemCount: transactions.length,
-          physics: const BouncingScrollPhysics(),
+          physics: const AlwaysScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
+          //physics: const BouncingScrollPhysics(),
           itemBuilder: (context, index) {
             final tx = transactions[index];
 

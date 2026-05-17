@@ -67,8 +67,8 @@ class MyApp extends StatelessWidget {
 /* 
 
 TODO:
-
 TESTING:
+
 - Category caching and state managment - Done 
 - Expense caching and state managment - Done
 - Reserve caching and state managment - Done
