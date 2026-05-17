@@ -1,5 +1,15 @@
 import 'dart:convert';
 
+List<Category> parseCategoryList(Object? data) {
+  if (data is String) {
+    final decoded = json.decode(data) as List;
+    return decoded.map((e) => Category.fromJson(e)).toList();
+  } else if (data is List) {
+    return data.map((e) => Category.fromJson(e)).toList();
+  }
+  return [];
+}
+
 class Category {
   final int id;
   final String name;
@@ -26,12 +36,6 @@ class Category {
 
   /// Parse a list of categories from JSON (string or list)
   static List<Category> listFromJson(dynamic data) {
-    if (data is String) {
-      final decoded = json.decode(data) as List;
-      return decoded.map((e) => Category.fromJson(e)).toList();
-    } else if (data is List) {
-      return data.map((e) => Category.fromJson(e)).toList();
-    }
-    return [];
+    return parseCategoryList(data);
   }
 }

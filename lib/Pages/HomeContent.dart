@@ -19,14 +19,12 @@ class _HomeContentState extends ConsumerState<HomeContent> {
   @override
   void initState() {
     super.initState();
-
-    Future.microtask(() async {
-      await Future.wait({
-        ref.read(balanceProvider.notifier).fetchBalance(),
-        ref.read(categoryProvider.notifier).load(),
-        ref.read(transactionProvider.notifier).loadExpenses(),
-        ref.read(transactionProvider.notifier).loadReserves(),
-      });
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(balanceProvider.notifier).fetchBalance();
+      await Future.delayed(const Duration(milliseconds: 16));
+      await ref.read(transactionProvider.notifier).loadExpenses();
+      ref.read(categoryProvider.notifier).load();
+      ref.read(transactionProvider.notifier).loadReserves();
     });
   }
 
