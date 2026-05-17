@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:etrace/Api/AddService.dart';
 import 'package:etrace/Model/Category.dart';
 import 'package:etrace/Notifiers/category/CategoryNotifier.dart';

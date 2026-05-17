@@ -1,5 +1,15 @@
 import 'dart:convert';
 
+List<Reserved> parseReservedList(Object? data) {
+  if (data is String) {
+    final decoded = json.decode(data) as List;
+    return decoded.map((e) => Reserved.fromJson(e)).toList();
+  } else if (data is List) {
+    return data.map((e) => Reserved.fromJson(e)).toList();
+  }
+  return [];
+}
+
 class Reserved {
   final int id;
   final String label;
@@ -24,13 +34,7 @@ class Reserved {
   }
 
   static List<Reserved> listFromJson(dynamic data) {
-    if (data is String) {
-      final decoded = json.decode(data) as List;
-      return decoded.map((e) => Reserved.fromJson(e)).toList();
-    } else if (data is List) {
-      return data.map((e) => Reserved.fromJson(e)).toList();
-    }
-    return [];
+    return parseReservedList(data);
   }
 
   // Convert Reserved → JSON

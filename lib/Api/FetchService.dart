@@ -2,9 +2,10 @@ import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:etrace/Api/ApiClient.dart';
-import 'package:etrace/Model/Category.dart';
+import 'package:etrace/Model/Category.dart' as CategoryModel;
 import 'package:etrace/Model/Expense.dart';
 import 'package:etrace/Model/Reserved.dart';
+import 'package:flutter/foundation.dart';
 
 class FetchService {
   final Dio dio = ApiClient().dio;
@@ -26,7 +27,7 @@ class FetchService {
                     response.data['expenses'] ??
                     [];
 
-          return Expense.listFromJson(jsonList);
+          return compute(parseExpenseList, jsonList);
         } else {
           log(
             "Failed to fetch expenses: ${response.statusCode} - ${response.data}",
@@ -56,7 +57,7 @@ class FetchService {
                   response.data['expenses'] ??
                   [];
 
-        return Reserved.listFromJson(jsonList);
+        return compute(parseReservedList, jsonList);
       } else {
         log(
           "Failed to fetch reserves: ${response.statusCode} - ${response.data}",
@@ -97,7 +98,7 @@ class FetchService {
                   response.data['expenses'] ??
                   [];
 
-        return Expense.listFromJson(jsonList);
+        return compute(parseExpenseList, jsonList);
       } else {
         log("Failed to fetch expenses by category: ${response.statusCode}");
         return [];
@@ -134,7 +135,7 @@ class FetchService {
                   response.data['expenses'] ??
                   [];
 
-        return Expense.listFromJson(jsonList);
+        return compute(parseExpenseList, jsonList);
       } else {
         log("Failed to fetch expenses by date range: ${response.statusCode}");
         return [];
@@ -145,7 +146,7 @@ class FetchService {
     }
   }
 
-  Future<List<Category>> fetchCategories() async {
+  Future<List<CategoryModel.Category>> fetchCategories() async {
     try {
       final response = await dio.get("/api/category");
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
@@ -153,7 +154,7 @@ class FetchService {
             ? response.data
             : response.data['data'] ?? response.data['categories'] ?? [];
 
-        return Category.listFromJson(jsonList);
+        return await compute(CategoryModel.parseCategoryList, jsonList);
       } else {
         log("Failed to fetch categories: ${response.statusCode}");
         return [];

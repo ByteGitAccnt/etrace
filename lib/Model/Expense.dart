@@ -1,5 +1,15 @@
 import 'dart:convert';
 
+List<Expense> parseExpenseList(Object? data) {
+  if (data is String) {
+    final decoded = json.decode(data) as List;
+    return decoded.map((e) => Expense.fromJson(e)).toList();
+  } else if (data is List) {
+    return data.map((e) => Expense.fromJson(e)).toList();
+  }
+  return [];
+}
+
 class Expense {
   final int id;
   final double amount;
@@ -39,13 +49,7 @@ class Expense {
 
   /// Helpers for list handling
   static List<Expense> listFromJson(dynamic data) {
-    if (data is String) {
-      final decoded = json.decode(data) as List;
-      return decoded.map((e) => Expense.fromJson(e)).toList();
-    } else if (data is List) {
-      return data.map((e) => Expense.fromJson(e)).toList();
-    }
-    return [];
+    return parseExpenseList(data);
   }
 
   static String listToJson(List<Expense> expenses) {
