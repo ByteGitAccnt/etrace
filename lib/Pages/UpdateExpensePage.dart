@@ -1,6 +1,5 @@
 import 'package:etrace/Api/UpdateService.dart';
 import 'package:etrace/Model/Transaction.dart';
-import 'package:etrace/Notifiers/transaction/TransactionNotifier.dart';
 import 'package:etrace/Utils/CustomeInputDecorator.dart';
 import 'package:etrace/Utils/ModerButton.dart';
 import 'package:flutter/material.dart';
