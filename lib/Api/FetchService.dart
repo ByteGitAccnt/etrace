@@ -26,7 +26,6 @@ class FetchService {
                     response.data['data'] ??
                     response.data['expenses'] ??
                     [];
-
           return await compute(parseExpenseList, jsonList);
         } else {
           log(
@@ -97,7 +96,6 @@ class FetchService {
                   response.data['data'] ??
                   response.data['expenses'] ??
                   [];
-
         return await compute(parseExpenseList, jsonList);
       } else {
         log("Failed to fetch expenses by category: ${response.statusCode}");
@@ -134,7 +132,6 @@ class FetchService {
                   response.data['data'] ??
                   response.data['expenses'] ??
                   [];
-
         return await compute(parseExpenseList, jsonList);
       } else {
         log("Failed to fetch expenses by date range: ${response.statusCode}");

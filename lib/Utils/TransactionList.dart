@@ -8,6 +8,7 @@ class TransactionList extends StatelessWidget {
   final bool isExpense;
   final bool enableDelete;
   final Function(Transaction tx, int index) onDelete;
+  final Function(Transaction tx) onEdit;
 
   // ScrollController (optional)
   final ScrollController? controller;
@@ -16,6 +17,7 @@ class TransactionList extends StatelessWidget {
     super.key,
     required this.transactions,
     required this.onDelete,
+    required this.onEdit,
     this.enableDelete = true,
     this.isExpense = true,
     this.controller,
@@ -48,7 +50,17 @@ class TransactionList extends StatelessWidget {
 
               endActionPane: ActionPane(
                 motion: const DrawerMotion(),
+
                 children: [
+                  SlidableAction(
+                    onPressed: (_) {
+                      onEdit(tx);
+                    },
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    icon: Icons.edit,
+                    label: 'Edit',
+                  ),
                   SlidableAction(
                     onPressed: (_) {
                       onDelete(tx, index);

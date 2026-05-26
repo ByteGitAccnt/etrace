@@ -136,13 +136,15 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
   // =======================================================
   // DELETE + UNDO
   // =======================================================
-  void deleteById(int id) {
+  void deleteById(int id, bool isExpense) {
     Transaction? item;
     int index = -1;
 
-    final expenseIndex = state.expenseItems.indexWhere((t) => t.id == id);
+    if (isExpense) {
+      final expenseIndex = state.expenseItems.indexWhere((t) => t.id == id);
 
-    if (expenseIndex != -1) {
+      if (expenseIndex == -1) return;
+
       item = state.expenseItems[expenseIndex];
       index = expenseIndex;
 

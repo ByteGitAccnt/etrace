@@ -1,4 +1,5 @@
 import 'package:etrace/Notifiers/transaction/TransactionNotifier.dart';
+import 'package:etrace/Pages/UpdateReservePage.dart';
 import 'package:etrace/Utils/TransactionList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -138,7 +139,7 @@ class _ReservePageState extends ConsumerState<ReservePage> {
                                 transactionProvider.notifier,
                               );
 
-                              notifier.deleteById(tx.id);
+                              notifier.deleteById(tx.id, false);
 
                               ScaffoldMessenger.of(context)
                                 ..hideCurrentSnackBar()
@@ -152,6 +153,17 @@ class _ReservePageState extends ConsumerState<ReservePage> {
                                     ),
                                   ),
                                 );
+                            },
+                            onEdit: (tx) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => UpdateReservePage(
+                                    transaction: tx,
+                                    emerald: emerald,
+                                  ),
+                                ),
+                              );
                             },
                           ),
                         ),

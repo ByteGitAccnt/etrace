@@ -1,4 +1,5 @@
 import 'package:etrace/Notifiers/transaction/TransactionNotifier.dart';
+import 'package:etrace/Pages/UpdateExpensePage.dart';
 import 'package:etrace/Utils/TransactionList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,15 +21,6 @@ class _ExpensePageState extends ConsumerState<ExpensePage> {
     super.initState();
 
     _scrollController = ScrollController();
-
-    // =====================================================
-    // INITIAL LOAD
-    // Safe because notifier now has cache guard:
-    // if already loaded -> no duplicate backend hit
-    // =====================================================
-    Future.microtask(() {
-      ref.read(transactionProvider.notifier).loadExpenses();
-    });
 
     // =====================================================
     // PAGINATION
@@ -84,7 +76,7 @@ class _ExpensePageState extends ConsumerState<ExpensePage> {
                 onDelete: (tx, index) {
                   final notifier = ref.read(transactionProvider.notifier);
 
-                  notifier.deleteById(tx.id);
+                  notifier.deleteById(tx.id, true);
 
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
@@ -94,6 +86,15 @@ class _ExpensePageState extends ConsumerState<ExpensePage> {
                         label: "UNDO",
                         onPressed: notifier.undo,
                       ),
+                    ),
+                  );
+                },
+                onEdit: (tx) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          UpdateExpensePage(transaction: tx, emerald: emerald),
                     ),
                   );
                 },
