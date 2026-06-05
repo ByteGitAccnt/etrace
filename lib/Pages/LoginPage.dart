@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:etrace/Api/AuthService.dart';
+import 'package:etrace/Config/app_Config.dart';
 import 'package:etrace/Notifiers/auth/AuthNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -89,8 +92,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         _password.text,
                       );
 
-                      //  MOCK LOGIN
-                      // bool success = true;
+                      if (!mounted) return;
 
                       if (success) {
                         //  Update global auth state

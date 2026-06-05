@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:etrace/Api/TokenManager.dart';
+import 'package:etrace/Config/app_Config.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiClient {
@@ -9,7 +10,8 @@ class ApiClient {
   late final Dio dio;
   final TokenManager tokenManager = TokenManager();
   void Function()? onUnauthorized;
-  final baseUrl = dotenv.env['BASE_URL'];
+  final baseUrl = AppConfig.baseUrl;
+  //final String? baseUrl = dotenv.env['BASE_URL'];
 
   ApiClient._internal() {
     dio = Dio(

@@ -1,18 +1,19 @@
 import 'package:etrace/Api/TokenManager.dart';
 import 'package:etrace/Notifiers/auth/AuthGate.dart';
 import 'package:etrace/Pages/ExpensePage.dart';
+import 'package:etrace/Pages/SplashPage.dart';
 import 'package:flutter/material.dart';
 import 'package:etrace/Pages/RegisterPage.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+//import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-//inal Color emeraldDark = const Color(0xFF046A38);
-// final Color emeraldLight = const Color(0xFF2EBB57);
-// final Color blackShade = const Color(0xFF1C1C1C);
+//Color emeraldDark = const Color(0xFF046A38);
+// Color emeraldLight = const Color(0xFF2EBB57);
+// Color blackShade = const Color(0xFF1C1C1C);
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await TokenManager().loadTokens(); // load tokens from storage to memory
-  await dotenv.load(fileName: ".env"); //  load env
+  //await dotenv.load(fileName: ".env"); //  load env
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: const AuthGate(),
+      home: const SplashPage(),
       onGenerateRoute: (settings) {
         const Color emerald = Color(0xFF046A38);
         late Widget page;
