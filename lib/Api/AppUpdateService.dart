@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:etrace/Api/ApiClient.dart';
 import 'package:etrace/Model/AppInfoResponse.dart';

@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:etrace/Api/AuthService.dart';
-import 'package:etrace/Config/app_Config.dart';
 import 'package:etrace/Notifiers/auth/AuthNotifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
