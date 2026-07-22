@@ -22,7 +22,7 @@ A comprehensive Flutter-based expense tracking application that helps users mana
 
 ### Version
 
-- **Current Version**: 1.0.1+1
+- **Current Version**: 2.0.0+2
 - **Flutter SDK**: ^3.10.7
 - **Platform Support**: iOS, Android, Web, Windows, macOS, Linux
 
