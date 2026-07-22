@@ -68,26 +68,8 @@ class MyApp extends StatelessWidget {
 /* 
 
 TODO:
+- report card with date and its pdf downloading 
 TESTING:
-
-- Category caching and state managment - Done 
-- Expense caching and state managment - Done
-- Reserve caching and state managment - Done
-- login - Done
-- register - Done
-- home page - Done
-- logout and token managment - Done
-- balance fetching - Done 
-- reserve fetching  - Done
-- category fetching - Done 
-- exense serach and fetch with offset and paging and without offset and paging - Done
-- Expense add - Done
-- Reserve add - Done
-- income add - Done
-- deletion logic for expense - Done
-- deletion logic for reserve - Done
-- Category fetching for id - Done
-- reserve withdraw - Done
-- reserve deposite - Done
-
+- Balnce fetching 
+- income adding and description ,UI improvment
  */

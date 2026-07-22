@@ -34,7 +34,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       case 2:
         return ReservePage();
       case 3:
-        return Reportpage();
+        return ReportPage();
       default:
         return HomeContent();
     }

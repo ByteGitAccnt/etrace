@@ -14,11 +14,13 @@ class AddIncomePage extends StatefulWidget {
 class _AddIncomePageState extends State<AddIncomePage> {
   final _formKey = GlobalKey<FormState>();
   final amountController = TextEditingController();
+  final descriptionController = TextEditingController();
   final Color blackShade = const Color(0xFF1C1C1C);
 
   @override
   void dispose() {
     amountController.dispose();
+    descriptionController.dispose();
     super.dispose();
   }
 
@@ -62,7 +64,21 @@ class _AddIncomePageState extends State<AddIncomePage> {
                   return null;
                 },
               ),
+              const SizedBox(height: 20),
 
+              /// Description
+              TextFormField(
+                controller: descriptionController,
+                maxLines: 3,
+                decoration: CustomeInputDecorator("Description", Icons.note),
+                style: const TextStyle(color: Colors.white),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return "Enter description";
+                  }
+                  return null;
+                },
+              ),
               const SizedBox(height: 30),
 
               /// Submit
@@ -77,6 +93,7 @@ class _AddIncomePageState extends State<AddIncomePage> {
                     // data needed to be added
                     final data = await AddService().addIncome(
                       double.parse(amountController.text),
+                      descriptionController.text,
                     );
                     if (data == null) {
                       ScaffoldMessenger.of(context).showSnackBar(

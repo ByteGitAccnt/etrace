@@ -9,14 +9,14 @@ import 'package:etrace/Model/User.dart';
 class AddService {
   final Dio dio = ApiClient().dio;
 
-  Future<User?> addIncome(double amount) async {
+  Future<User?> addIncome(double amount, String description) async {
     if (amount <= 0) {
       return null;
     }
     try {
       final response = await dio.post(
-        "/api/auth/income",
-        data: {"amount": amount},
+        "/api/Accnt/income",
+        data: {"amount": amount, "description": description},
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
         final json = response.data;

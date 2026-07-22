@@ -6,7 +6,7 @@ class BalanceService {
   //bool useMock = false; // toggle this for mock or real API
 
   Future<Balance> fetchCombinedBalance() async {
-    final accountResponse = await dio.get("/api/auth/balance");
+    final accountResponse = await dio.get("/api/Accnt/balance");
     final reserveResponse = await dio.get("/api/reserve/balance");
 
     final account = (accountResponse.data['balance'] as num).toDouble();

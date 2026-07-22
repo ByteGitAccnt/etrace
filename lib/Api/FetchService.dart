@@ -6,6 +6,7 @@ import 'package:etrace/Model/Category.dart' as CategoryModel;
 import 'package:etrace/Model/Expense.dart';
 import 'package:etrace/Model/Reserved.dart';
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 
 class FetchService {
   final Dio dio = ApiClient().dio;
@@ -159,6 +160,29 @@ class FetchService {
     } on DioException catch (e) {
       log("Network Error fetching categories: $e");
       return [];
+    }
+  }
+
+  Future<Uint8List> downloadExpenseReport(DateTime from, DateTime to) async {
+    try {
+      final formatter = DateFormat('yyyy-MM-dd');
+      final response = await dio.get(
+        "/api/Report/pdf",
+        queryParameters: {
+          "fromDate": formatter.format(from),
+          "toDate": formatter.format(to),
+        },
+        options: Options(responseType: ResponseType.bytes),
+      );
+
+      if (response.statusCode == 200) {
+        return Uint8List.fromList(response.data);
+      }
+
+      throw Exception("Unexpected status code: ${response.statusCode}");
+    } on DioException catch (e) {
+      log("Report download failed", error: e);
+      rethrow;
     }
   }
 }
