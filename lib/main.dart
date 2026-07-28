@@ -68,8 +68,6 @@ class MyApp extends StatelessWidget {
 /* 
 
 TODO:
-- report card with date and its pdf downloading 
-TESTING:
-- Balnce fetching 
-- income adding and description ,UI improvment
+Available balance in the wallet - UI improvment 
+if reserve fund is 0 , we avoid shoiwing it and if not we show it , calaculate the available balance from frond end , dont wait for teh backend !
  */
