@@ -98,7 +98,7 @@ class AddService {
     }
     try {
       final response = await dio.post(
-        "/api/reserve/deposite",
+        "/api/reserve/deposit",
         data: {"amount": amount, "label": label},
       );
       if (response.statusCode! >= 200 && response.statusCode! < 300) {
