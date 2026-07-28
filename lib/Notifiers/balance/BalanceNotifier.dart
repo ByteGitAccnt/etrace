@@ -1,6 +1,6 @@
 import 'package:etrace/Notifiers/balance/BalanceService.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:etrace/model/Balance.dart';
+import 'package:etrace/Model/Balance.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
 class BalanceNotifier extends StateNotifier<AsyncValue<Balance>> {

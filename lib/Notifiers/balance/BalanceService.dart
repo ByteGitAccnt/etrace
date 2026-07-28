@@ -1,5 +1,5 @@
 import 'package:etrace/Api/ApiClient.dart';
-import 'package:etrace/model/Balance.dart';
+import 'package:etrace/Model/Balance.dart';
 
 class BalanceService {
   final dio = ApiClient().dio;
